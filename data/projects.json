@@ -1,0 +1,18 @@
+[
+  {
+    "repo": "jarvis-dashboard",
+    "blurb": "AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics."
+  },
+  {
+    "repo": "react-native-swiftui-dsl",
+    "blurb": "SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings."
+  },
+  {
+    "repo": "AnalyticsSystem",
+    "blurb": "Type-safe, provider-agnostic analytics layer for Swift apps."
+  },
+  {
+    "repo": "RealmStorage",
+    "blurb": "Modern Realm wrapper for iOS, macOS, tvOS and watchOS."
+  }
+]
