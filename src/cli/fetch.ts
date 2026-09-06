@@ -8,7 +8,7 @@
 
 import { readFile, writeFile } from 'node:fs/promises';
 import { FetchGraphQLTransport, GitHubClient } from '../data/github-client.ts';
-import { dataPath, loadAuthoredData } from '../data/load.ts';
+import { dataPath, loadConfig } from '../data/load.ts';
 import { preserveRicherSnapshot } from '../data/merge.ts';
 import { LiveStatsSource, parseSnapshot } from '../data/stats-source.ts';
 
@@ -20,7 +20,7 @@ async function main(): Promise<void> {
   if (token === undefined) {
     throw new Error('Set PROFILE_TOKEN or GITHUB_TOKEN to fetch stats.');
   }
-  const { profile } = await loadAuthoredData();
+  const { profile } = await loadConfig();
   const source = new LiveStatsSource(
     new GitHubClient(new FetchGraphQLTransport(token)),
     profile.login,

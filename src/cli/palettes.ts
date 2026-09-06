@@ -17,16 +17,17 @@ const SAMPLE_IDS = new Set(['hero', 'stats', 'languages', 'contributions']);
 
 async function main(): Promise<void> {
   const data = await loadProfileData();
-  const renderers = buildRegistry(data).filter((renderer) => SAMPLE_IDS.has(renderer.id));
+  const renderers = buildRegistry(data.config).filter((renderer) => SAMPLE_IDS.has(renderer.id));
   const sections: string[] = [];
   for (const [id, variant] of Object.entries(PALETTES)) {
     const outDir = `preview/palettes/${id}`;
     await buildAssets({
       renderers,
-      themes: themesFor(id),
+      themes: themesFor(id, data.config.appearance.radius),
       data,
       sink: new DiskSink(ROOT_DIR),
       outDir,
+      viewports: ['wide'],
     });
     const images = (mode: 'dark' | 'light'): string =>
       renderers.map((r) => `<img src="${id}/${r.id}-${mode}.svg" alt="${r.id} ${mode}">`).join('');

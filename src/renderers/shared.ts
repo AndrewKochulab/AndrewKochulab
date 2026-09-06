@@ -8,35 +8,38 @@ import { animationCss } from '../core/animation.ts';
 import { combine, type Fragment } from '../core/fragment.ts';
 import { joinChildren, svgDocument } from '../core/svg.ts';
 import { layoutText, measureText, outlineText, type FontId } from '../core/text.ts';
-import type { AssetRenderer, RenderContext } from '../core/types.ts';
+import type { AssetSize, RenderContext, Viewport } from '../core/types.ts';
 import { frame } from '../primitives/background.ts';
 export { seeded } from '../core/random.ts';
 import { glowDefs } from '../primitives/glow.ts';
 
-/** Horizontal padding inside every asset. */
-export const PAD = 36;
+/** Horizontal padding inside an asset, by viewport. */
+export function pad(viewport: Viewport): number {
+  return viewport === 'compact' ? 20 : 36;
+}
 
 /**
  * Assembles a complete document: background frame, shared animation CSS and
  * glow filters, then the renderer's fragments.
  */
 export function assemble(
-  renderer: Pick<AssetRenderer, 'width' | 'height'>,
+  size: AssetSize,
   ctx: RenderContext,
   title: string,
   fragments: readonly Fragment[],
   options: { readonly intensity?: number } = {},
 ): string {
   const background = frame({
-    width: renderer.width,
-    height: renderer.height,
+    width: size.width,
+    height: size.height,
     theme: ctx.theme,
     ...options,
   });
   const merged = combine(background, ...fragments);
   return svgDocument({
-    width: renderer.width,
-    height: renderer.height,
+    width: size.width,
+    height: size.height,
+    display: size.display,
     title,
     defs: [...glowDefs(), ...merged.defs],
     css: [animationCss(), merged.css].filter((css) => css !== '').join('\n'),
@@ -80,17 +83,73 @@ export function eyebrow(
   x: number,
   y: number,
   fill: string,
-  attrs: Readonly<Record<string, string | number | undefined>> = {},
+  options: {
+    readonly size?: number;
+    readonly letterSpacing?: number;
+    readonly attrs?: Readonly<Record<string, string | number | undefined>>;
+  } = {},
 ): string {
   return outlineText(content.toUpperCase(), {
     font: 'displaySemiBold',
-    size: 11,
-    letterSpacing: 1.6,
+    size: options.size ?? 11,
+    letterSpacing: options.letterSpacing ?? 1.6,
     x,
     y,
     fill,
-    attrs,
+    attrs: options.attrs ?? {},
   });
+}
+
+/**
+ * The largest size, at or below `preferred`, at which `content` fits within
+ * `maxWidth`. Keeps long names inside a phone-width card without ever
+ * clipping or hyphenating them.
+ */
+export function fitSize(
+  content: string,
+  font: FontId,
+  maxWidth: number,
+  preferred: number,
+  minimum = preferred * 0.6,
+): number {
+  const width = measureText(content, { font, size: preferred });
+  if (width <= maxWidth || width === 0) return preferred;
+  return Math.max(minimum, (preferred * maxWidth) / width);
+}
+
+/**
+ * Flows items of known width into rows no wider than `maxWidth`, returning
+ * the x/y of each. Used for the hero's stack chips, which wrap on a phone.
+ */
+export function flowRows(
+  widths: readonly number[],
+  options: {
+    readonly maxWidth: number;
+    readonly gap: number;
+    readonly rowHeight: number;
+    readonly rowGap: number;
+    readonly left: number;
+    readonly top: number;
+  },
+): {
+  readonly positions: readonly { readonly x: number; readonly y: number }[];
+  readonly height: number;
+} {
+  const positions: { x: number; y: number }[] = [];
+  let x = 0;
+  let row = 0;
+  for (const width of widths) {
+    if (x > 0 && x + width > options.maxWidth) {
+      row += 1;
+      x = 0;
+    }
+    positions.push({
+      x: options.left + x,
+      y: options.top + row * (options.rowHeight + options.rowGap),
+    });
+    x += width + options.gap;
+  }
+  return { positions, height: (row + 1) * options.rowHeight + row * options.rowGap };
 }
 
 /** Width of `content` in the display-medium face at `size`. */

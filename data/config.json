@@ -1,0 +1,81 @@
+{
+  "profile": {
+    "login": "AndrewKochulab",
+    "name": "Andrew Kochulab",
+    "title": "Senior iOS Engineer",
+    "location": "Lviv, Ukraine",
+    "taglines": [
+      "Agentic AI workflows that ship real work",
+      "Swift & SwiftUI apps, crafted with care",
+      "A React Native DSL that feels like SwiftUI",
+      "AI dashboards for Claude Code sessions",
+      "An Obsidian vault as a second brain",
+      "Small tools that make developers smile"
+    ]
+  },
+
+  "appearance": {
+    "palette": "ocean",
+    "radius": 22,
+    "mobile": { "enabled": true, "breakpoint": 600 }
+  },
+
+  "sections": ["hero", "activity", "projects", "contributions", "contact"],
+
+  "hero": {
+    "stack": [
+      { "slug": "swift", "label": "Swift" },
+      { "slug": "react", "label": "React Native" },
+      { "slug": "python", "label": "Python" },
+      { "slug": "claude", "label": "Claude Code" }
+    ],
+    "tiles": [
+      { "slug": "swift", "gradient": ["#ff9f43", "#f0433a"] },
+      { "slug": "react", "gradient": ["#67d6ff", "#0a84ff"] },
+      { "slug": "python", "gradient": ["#4f8ff7", "#1f4fbf"] },
+      { "slug": "claude", "gradient": ["#ffb08a", "#d9633f"] }
+    ],
+    "sparkles": 9
+  },
+
+  "stats": {
+    "tiles": ["stars", "repos", "followers", "streak"]
+  },
+
+  "languages": {
+    "count": 5
+  },
+
+  "projects": {
+    "layout": "grid",
+    "items": [
+      {
+        "repo": "jarvis-dashboard",
+        "blurb": "AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics."
+      },
+      {
+        "repo": "react-native-swiftui-dsl",
+        "blurb": "SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings."
+      },
+      {
+        "repo": "AnalyticsSystem",
+        "blurb": "Type-safe, provider-agnostic analytics layer for Swift apps."
+      },
+      {
+        "repo": "RealmStorage",
+        "blurb": "Modern Realm wrapper for iOS, macOS, tvOS and watchOS."
+      }
+    ]
+  },
+
+  "contributions": {
+    "snake": true
+  },
+
+  "links": [
+    { "id": "instagram", "label": "Instagram", "url": "https://www.instagram.com/andrewkochulab" },
+    { "id": "linkedin", "label": "LinkedIn", "url": "https://www.linkedin.com/in/andrewkochulab" }
+  ],
+
+  "text": {}
+}

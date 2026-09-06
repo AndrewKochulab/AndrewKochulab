@@ -14,10 +14,10 @@ import {
   paletteById,
 } from './tokens.ts';
 
-/** Dark and light themes for the variant `id`. */
-export function themesFor(id: string): readonly Theme[] {
+/** Dark and light themes for the variant `id`, with an optional corner radius. */
+export function themesFor(id: string, radius?: number): readonly Theme[] {
   const variant = paletteById(id);
-  return [createTheme(variant, 'dark'), createTheme(variant, 'light')];
+  return [createTheme(variant, 'dark', radius), createTheme(variant, 'light', radius)];
 }
 
 /** The active variant: `PALETTE` env var, else the configured default. */

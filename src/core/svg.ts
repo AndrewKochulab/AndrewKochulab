@@ -77,6 +77,14 @@ export interface DocumentOptions {
   readonly defs?: readonly string[];
   /** CSS placed in a `<style>` element at the top of the document. */
   readonly css?: string;
+  /**
+   * Intrinsic width in CSS pixels for the `width`/`height` attributes; the
+   * `viewBox` is unaffected, so the drawing simply scales. Defaults to the
+   * viewBox width. This is what decides how much room the image asks for
+   * inside a README, which is how the layout stays responsive without any
+   * width attributes in the markup.
+   */
+  readonly display?: number;
   readonly children: readonly string[];
 }
 
@@ -85,7 +93,8 @@ export interface DocumentOptions {
  * an accessible `<title>`, optional `<defs>` and `<style>`.
  */
 export function svgDocument(options: DocumentOptions): string {
-  const { width, height, title, defs = [], css, children } = options;
+  const { width, height, title, defs = [], css, display = width, children } = options;
+  const scale = display / width;
   const head = [
     el('title', {}, escapeXml(title)),
     css === undefined ? '' : style(css),
@@ -96,8 +105,8 @@ export function svgDocument(options: DocumentOptions): string {
     {
       xmlns: 'http://www.w3.org/2000/svg',
       viewBox: `0 0 ${num(width)} ${num(height)}`,
-      width,
-      height,
+      width: num(Math.round(display)),
+      height: num(Math.round(height * scale)),
       role: 'img',
       'aria-label': title,
     },

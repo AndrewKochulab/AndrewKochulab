@@ -13,20 +13,89 @@
  */
 
 import { ANIM } from '../core/animation.ts';
+import { format } from '../config/format.ts';
 import type { Fragment } from '../core/fragment.ts';
 import { el, grouped, num } from '../core/svg.ts';
 import { outlineText } from '../core/text.ts';
-import type { AssetRenderer, CalendarCell, RenderContext, Theme } from '../core/types.ts';
-import { PAD, animated, assemble, eyebrow } from './shared.ts';
+import type {
+  AssetRenderer,
+  AssetSize,
+  CalendarCell,
+  RenderContext,
+  Theme,
+  Viewport,
+} from '../core/types.ts';
+import { animated, assemble, eyebrow, pad } from './shared.ts';
 
-const WIDTH = 1200;
-const HEIGHT = 250;
-const CELL = 16;
-const GAP = 4;
-const STEP = CELL + GAP;
 const COLUMNS = 53;
-const GRID_LEFT = (WIDTH - COLUMNS * STEP + GAP) / 2;
-const GRID_TOP = 74;
+
+/** Geometry of the calendar for one viewport. */
+interface CalendarLayout extends AssetSize {
+  readonly cell: number;
+  readonly gap: number;
+  readonly gridTop: number;
+  readonly headerY: number;
+  readonly headerSize: number;
+  readonly headerSpacing: number;
+  readonly captionSize: number;
+  /** Put the caption on its own line, for headers that cannot share one. */
+  readonly captionOwnLine: boolean;
+  readonly monthSize: number;
+  /** Draw a month label only every nth column that starts a month. */
+  readonly monthEvery: number;
+  readonly weekdays: boolean;
+  readonly legendSize: number;
+}
+
+const WIDE: CalendarLayout = {
+  width: 1200,
+  height: 250,
+  display: 880,
+  cell: 16,
+  gap: 4,
+  gridTop: 74,
+  headerY: 40,
+  headerSize: 11,
+  headerSpacing: 1.6,
+  captionSize: 10.5,
+  captionOwnLine: false,
+  monthSize: 10,
+  monthEvery: 1,
+  weekdays: true,
+  legendSize: 10,
+};
+
+const COMPACT: CalendarLayout = {
+  width: 400,
+  height: 172,
+  display: 400,
+  cell: 5.2,
+  gap: 1.4,
+  gridTop: 78,
+  headerY: 30,
+  headerSize: 9,
+  headerSpacing: 1,
+  captionSize: 8.5,
+  captionOwnLine: true,
+  monthSize: 8,
+  monthEvery: 2,
+  weekdays: false,
+  legendSize: 8.5,
+};
+
+function layoutFor(viewport: Viewport): CalendarLayout {
+  return viewport === 'compact' ? COMPACT : WIDE;
+}
+
+/** Step between column origins. */
+function step(layout: CalendarLayout): number {
+  return layout.cell + layout.gap;
+}
+
+/** Left edge of the grid, centred in the frame. */
+function gridLeft(layout: CalendarLayout): number {
+  return (layout.width - COLUMNS * step(layout) + layout.gap) / 2;
+}
 /** Milliseconds per one-cell step of the snake. */
 const STEP_MS = 95;
 /** A lap never takes longer than this; the step shortens if the hunt is long. */
@@ -57,15 +126,20 @@ function ramp(theme: Theme): readonly string[] {
 }
 
 /** Lays the calendar out in GitHub's column-per-week arrangement (weeks start on Sunday). */
-export function placeCells(calendar: readonly CalendarCell[]): PlacedCell[] {
+export function placeCells(
+  calendar: readonly CalendarCell[],
+  layout: CalendarLayout = WIDE,
+): PlacedCell[] {
   const first = calendar[0];
   if (first === undefined) return [];
   const offset = new Date(`${first.date}T00:00:00Z`).getUTCDay();
+  const left = gridLeft(layout);
+  const pitch = step(layout);
   return calendar.map((cell, index) => {
     const slot = index + offset;
     const column = Math.floor(slot / 7);
     const row = slot % 7;
-    return { cell, column, row, x: GRID_LEFT + column * STEP, y: GRID_TOP + row * STEP };
+    return { cell, column, row, x: left + column * pitch, y: layout.gridTop + row * pitch };
   });
 }
 
@@ -139,25 +213,39 @@ export function huntPath(cells: readonly PlacedCell[]): Hunt {
 }
 
 /** Centre of a grid position in user units. */
-function centre(step: Step): { readonly x: number; readonly y: number } {
-  return { x: GRID_LEFT + step.column * STEP + CELL / 2, y: GRID_TOP + step.row * STEP + CELL / 2 };
+function centre(at: Step, layout: CalendarLayout): { readonly x: number; readonly y: number } {
+  const pitch = step(layout);
+  return {
+    x: gridLeft(layout) + at.column * pitch + layout.cell / 2,
+    y: layout.gridTop + at.row * pitch + layout.cell / 2,
+  };
 }
 
-function monthLabels(ctx: RenderContext, placed: readonly PlacedCell[]): string {
+function monthLabels(
+  ctx: RenderContext,
+  placed: readonly PlacedCell[],
+  layout: CalendarLayout,
+): string {
   const { palette } = ctx.theme;
   const seen = new Set<number>();
   const labels: string[] = [];
+  let shown = 0;
   for (const item of placed) {
     const month = Number(item.cell.date.slice(5, 7)) - 1;
     const day = Number(item.cell.date.slice(8, 10));
     if (day > 7 || seen.has(item.column) || item.row !== 0) continue;
     seen.add(item.column);
+    if (shown % layout.monthEvery !== 0) {
+      shown += 1;
+      continue;
+    }
+    shown += 1;
     labels.push(
       outlineText(MONTHS[month] ?? '', {
         font: 'mono',
-        size: 10,
+        size: layout.monthSize,
         x: item.x,
-        y: GRID_TOP - 12,
+        y: layout.gridTop - layout.monthSize - 2,
         fill: palette.text.muted,
       }),
     );
@@ -165,15 +253,16 @@ function monthLabels(ctx: RenderContext, placed: readonly PlacedCell[]): string 
   return labels.join('');
 }
 
-function weekdayLabels(ctx: RenderContext): string {
+function weekdayLabels(ctx: RenderContext, layout: CalendarLayout): string {
+  if (!layout.weekdays) return '';
   const { palette } = ctx.theme;
   return Object.entries(WEEKDAYS)
     .map(([row, label]) =>
       outlineText(label, {
         font: 'mono',
-        size: 10,
-        x: GRID_LEFT - 10,
-        y: GRID_TOP + Number(row) * STEP + CELL / 2 + 3.5,
+        size: layout.monthSize,
+        x: gridLeft(layout) - 10,
+        y: layout.gridTop + Number(row) * step(layout) + layout.cell / 2 + 3.5,
         anchor: 'end',
         fill: palette.text.muted,
       }),
@@ -204,13 +293,20 @@ function cells(
   placed: readonly PlacedCell[],
   hunt: Hunt,
   time: Timeline,
+  layout: CalendarLayout,
 ): Fragment {
   const { palette } = ctx.theme;
   const colors = ramp(ctx.theme);
   const flash = ctx.theme.name === 'dark' ? '#ffffff' : '#1d1d1f';
   const body = placed.map((item) => {
     const { cell } = item;
-    const base = { x: num(item.x), y: num(item.y), width: CELL, height: CELL, rx: 4 };
+    const base = {
+      x: num(item.x),
+      y: num(item.y),
+      width: num(layout.cell),
+      height: num(layout.cell),
+      rx: num(layout.cell * 0.25),
+    };
     if (cell.level === 0) {
       return el('rect', {
         ...base,
@@ -253,7 +349,11 @@ function cells(
           values: `${color};${color};${flash};${color};${color};${color}`,
           ...timing,
         }),
-        el('animate', { attributeName: 'stroke-width', values: '0;0;7;0;0;0', ...timing }),
+        el('animate', {
+          attributeName: 'stroke-width',
+          values: `0;0;${num(layout.cell * 0.44)};0;0;0`,
+          ...timing,
+        }),
       ],
     );
   });
@@ -261,12 +361,12 @@ function cells(
   return { body: body.join(''), css };
 }
 
-function snake(ctx: RenderContext, hunt: Hunt, time: Timeline): Fragment {
+function snake(ctx: RenderContext, hunt: Hunt, time: Timeline, layout: CalendarLayout): Fragment {
   const { palette } = ctx.theme;
   if (hunt.steps.length < 2) return { body: '' };
   const path = hunt.steps
-    .map((step, i) => {
-      const { x, y } = centre(step);
+    .map((at, i) => {
+      const { x, y } = centre(at, layout);
       return `${i === 0 ? 'M' : 'L'} ${num(x)} ${num(y)}`;
     })
     .join(' ');
@@ -305,7 +405,7 @@ function snake(ctx: RenderContext, hunt: Hunt, time: Timeline): Fragment {
   const segments: string[] = [];
   for (let i = BODY_SEGMENTS; i >= 1; i -= 1) {
     const t = i / (BODY_SEGMENTS + 1);
-    const size = CELL * (0.92 - t * 0.28);
+    const size = layout.cell * (0.92 - t * 0.28);
     segments.push(
       at([
         el('rect', {
@@ -321,95 +421,127 @@ function snake(ctx: RenderContext, hunt: Hunt, time: Timeline): Fragment {
       ]),
     );
   }
+  // The head is drawn against a 16-unit cell and scaled to whatever the
+  // viewport uses, so it stays exactly one cell wide on a phone too.
+  const k = layout.cell / 16;
   const head = at([
     el('rect', {
-      x: -12,
-      y: -12,
-      width: 24,
-      height: 24,
-      rx: 9,
+      x: num(-12 * k),
+      y: num(-12 * k),
+      width: num(24 * k),
+      height: num(24 * k),
+      rx: num(9 * k),
       fill: palette.accent.primary,
       opacity: 0.35,
       filter: 'url(#glow-soft)',
     }),
-    el('rect', { x: -9.5, y: -9.5, width: 19, height: 19, rx: 6.5, fill: 'url(#snake-grad)' }),
-    el('circle', { cx: 3.5, cy: -4, r: 3, fill: '#ffffff' }),
-    el('circle', { cx: 3.5, cy: 4, r: 3, fill: '#ffffff' }),
-    el('circle', { cx: 4.5, cy: -4, r: 1.5, fill: '#1d1d1f' }),
-    el('circle', { cx: 4.5, cy: 4, r: 1.5, fill: '#1d1d1f' }),
+    el('rect', {
+      x: num(-9.5 * k),
+      y: num(-9.5 * k),
+      width: num(19 * k),
+      height: num(19 * k),
+      rx: num(6.5 * k),
+      fill: 'url(#snake-grad)',
+    }),
+    el('circle', { cx: num(3.5 * k), cy: num(-4 * k), r: num(3 * k), fill: '#ffffff' }),
+    el('circle', { cx: num(3.5 * k), cy: num(4 * k), r: num(3 * k), fill: '#ffffff' }),
+    el('circle', { cx: num(4.5 * k), cy: num(-4 * k), r: num(1.5 * k), fill: '#1d1d1f' }),
+    el('circle', { cx: num(4.5 * k), cy: num(4 * k), r: num(1.5 * k), fill: '#1d1d1f' }),
     motion(0),
   ]);
   return { body: el('g', { class: 'snake', opacity: 0 }, [...segments, head, fade]), defs };
 }
 
-function legend(ctx: RenderContext): string {
+function legend(ctx: RenderContext, layout: CalendarLayout): string {
   const { palette } = ctx.theme;
+  const { text } = ctx.data.config;
   const colors = [palette.surface, ...ramp(ctx.theme)];
-  const y = HEIGHT - 30;
-  const x0 = WIDTH - PAD - colors.length * 16 - 62;
+  const swatch = layout.legendSize + 2;
+  const pitch = swatch + 4;
+  const y = layout.height - swatch - 18;
+  const x0 = layout.width - pad(ctx.viewport) - colors.length * pitch - 62;
   return [
-    outlineText('Less', {
+    outlineText(text.legendLess, {
       font: 'mono',
-      size: 10,
+      size: layout.legendSize,
       x: x0 - 8,
-      y: y + 8,
+      y: y + swatch - 2,
       anchor: 'end',
       fill: palette.text.muted,
     }),
     ...colors.map((color, i) =>
       el('rect', {
-        x: num(x0 + i * 16),
-        y: num(y - 2),
-        width: 12,
-        height: 12,
+        x: num(x0 + i * pitch),
+        y: num(y),
+        width: num(swatch),
+        height: num(swatch),
         rx: 3,
         fill: color,
         stroke: i === 0 ? palette.surfaceBorder : 'none',
         'stroke-width': 0.5,
       }),
     ),
-    outlineText('More', {
+    outlineText(text.legendMore, {
       font: 'mono',
-      size: 10,
-      x: x0 + colors.length * 16 + 4,
-      y: y + 8,
+      size: layout.legendSize,
+      x: x0 + colors.length * pitch + 4,
+      y: y + swatch - 2,
       fill: palette.text.muted,
     }),
   ].join('');
 }
 
-function header(ctx: RenderContext): string {
+function header(ctx: RenderContext, layout: CalendarLayout): string {
   const { palette } = ctx.theme;
   const { stats } = ctx.data;
-  const scope = stats.scope === 'private-included' ? 'public + private' : 'public only';
+  const { text } = ctx.data.config;
+  const inset = pad(ctx.viewport);
+  const scope =
+    stats.scope === 'private-included' ? text.calendarScopePrivate : text.calendarScopePublic;
   return animated(ANIM.rise, 40, [
-    eyebrow('Contributions · last 12 months', PAD, 40, palette.text.muted),
-    outlineText(`${grouped(stats.contributionsLastYear)} contributions · ${scope}`, {
-      font: 'mono',
-      size: 10.5,
-      x: WIDTH - PAD,
-      y: 40,
-      anchor: 'end',
-      fill: palette.text.muted,
+    eyebrow(text.contributionsTitle, inset, layout.headerY, palette.text.muted, {
+      size: layout.headerSize,
+      letterSpacing: layout.headerSpacing,
     }),
+    outlineText(
+      format(text.contributionsCaption, {
+        contributions: grouped(stats.contributionsLastYear),
+        scope,
+      }),
+      {
+        font: 'mono',
+        size: layout.captionSize,
+        x: layout.captionOwnLine ? inset : layout.width - inset,
+        y: layout.captionOwnLine ? layout.headerY + 16 : layout.headerY,
+        anchor: layout.captionOwnLine ? 'start' : 'end',
+        fill: palette.text.muted,
+      },
+    ),
   ]);
 }
 
 /** The contribution calendar renderer. */
 export const contributionsRenderer: AssetRenderer = {
   id: 'contributions',
-  width: WIDTH,
-  height: HEIGHT,
+  viewports: ['wide', 'compact'],
+  size: layoutFor,
   render(ctx) {
-    const placed = placeCells(ctx.data.stats.calendar);
+    const layout = layoutFor(ctx.viewport);
+    const placed = placeCells(ctx.data.stats.calendar, layout);
     const hunt = huntPath(placed);
     const time = timeline(hunt);
-    return assemble(contributionsRenderer, ctx, 'Contribution calendar', [
-      { body: header(ctx) },
-      { body: animated(ANIM.fade, 200, monthLabels(ctx, placed) + weekdayLabels(ctx)) },
-      cells(ctx, placed, hunt, time),
-      snake(ctx, hunt, time),
-      { body: animated(ANIM.fade, 400, legend(ctx)) },
+    return assemble(layout, ctx, ctx.data.config.text.contributionsTitle, [
+      { body: header(ctx, layout) },
+      {
+        body: animated(
+          ANIM.fade,
+          200,
+          monthLabels(ctx, placed, layout) + weekdayLabels(ctx, layout),
+        ),
+      },
+      cells(ctx, placed, hunt, time, layout),
+      ctx.data.config.contributions.snake ? snake(ctx, hunt, time, layout) : { body: '' },
+      { body: animated(ANIM.fade, 400, legend(ctx, layout)) },
     ]);
   },
 };

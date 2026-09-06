@@ -4,7 +4,7 @@
  *
  * A variant defines the accents, the ground and the glow for dark and light
  * mode. Everything else (glass surfaces, text) is shared. The active variant
- * is chosen in `data/profile.json` (`palette`), or overridden with the
+ * is chosen in `data/config.json` (`appearance.palette`), or overridden with the
  * `PALETTE` environment variable for previews.
  */
 
@@ -124,11 +124,11 @@ export const PALETTES: Readonly<Record<string, PaletteVariant>> = {
 export const DEFAULT_PALETTE = 'aurora';
 
 /** Builds a theme for `mode` from a palette variant. */
-export function createTheme(variant: PaletteVariant, mode: ThemeName): Theme {
+export function createTheme(variant: PaletteVariant, mode: ThemeName, radius = RADIUS): Theme {
   const tint = variant[mode];
   return {
     name: mode,
-    radius: RADIUS,
+    radius,
     typography,
     palette: {
       ...SHARED[mode],
