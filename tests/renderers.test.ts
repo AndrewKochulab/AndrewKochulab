@@ -127,6 +127,28 @@ describe('readme', () => {
     assert.ok(!markdown.includes('refreshed daily'), 'no footer');
   });
 
+  it('resolves a section hidden on phones to a blank image below the breakpoint', async () => {
+    const { config } = await fixtureData();
+    const hidden = {
+      ...config,
+      appearance: {
+        ...config.appearance,
+        mobile: { ...config.appearance.mobile, hide: ['contributions' as const] },
+      },
+    };
+    const renderers = buildRegistry(hidden);
+    const calendar = renderers.find((r) => r.id === 'contributions');
+    assert.deepEqual(calendar?.viewports, ['wide'], 'no phone variant is built');
+    const markdown = readmeMarkdown(hidden, renderers);
+    assert.ok(markdown.includes('<source media="(max-width: 600px)" srcset="assets/blank.svg">'));
+    assert.ok(!markdown.includes('contributions-mobile'));
+    // A width attribute would stretch the blank image back into a gap.
+    const block = markdown.split('\n').find((line) => line.includes('assets/blank.svg')) ?? '';
+    assert.ok(!block.includes('width='), block);
+    // Sections that are not hidden keep their phone variant.
+    assert.ok(markdown.includes('stats-mobile-dark.svg'));
+  });
+
   it('follows the configured section order and drops what is not listed', async () => {
     const { config } = await fixtureData();
     const reordered = { ...config, sections: ['contributions', 'hero'] as const };

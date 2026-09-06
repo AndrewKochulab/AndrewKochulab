@@ -55,7 +55,10 @@ const PAGE = (body: string): string => `<!doctype html>
     document.getElementById('width').textContent = phone ? 'Desktop width' : 'Phone width';
     for (const source of document.querySelectorAll('picture source')) {
       const media = source.dataset.media ?? (source.dataset.media = source.getAttribute('media'));
-      const wantsScheme = media.includes(dark ? 'dark' : 'light');
+      // A source with no colour scheme in its media (the blank placeholder a
+      // hidden section resolves to) matches whichever theme is showing.
+      const scheme = /dark|light/.test(media);
+      const wantsScheme = !scheme || media.includes(dark ? 'dark' : 'light');
       const isCompact = media.includes('max-width');
       source.setAttribute('media', wantsScheme && isCompact === phone ? 'all' : 'not all');
     }

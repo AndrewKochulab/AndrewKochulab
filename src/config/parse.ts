@@ -131,6 +131,14 @@ function profile(raw: unknown): ProfileConfig {
   };
 }
 
+const SECTION_IDS: readonly SectionId[] = [
+  'hero',
+  'activity',
+  'projects',
+  'contributions',
+  'contact',
+];
+
 function appearance(raw: unknown): AppearanceConfig {
   const source = object(raw, 'appearance');
   const mobile = object(source['mobile'], 'appearance.mobile');
@@ -149,17 +157,12 @@ function appearance(raw: unknown): AppearanceConfig {
         DEFAULT_APPEARANCE.mobile.breakpoint,
         { min: 200, max: 1600 },
       ),
+      hide: stringArray(mobile['hide'], 'appearance.mobile.hide').map((entry, index) =>
+        oneOf(entry, SECTION_IDS, `appearance.mobile.hide[${index}]`),
+      ),
     },
   };
 }
-
-const SECTION_IDS: readonly SectionId[] = [
-  'hero',
-  'activity',
-  'projects',
-  'contributions',
-  'contact',
-];
 
 function sections(raw: unknown): readonly SectionId[] {
   if (raw === undefined) return DEFAULT_SECTIONS;

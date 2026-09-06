@@ -34,6 +34,7 @@ npm run preview   # preview/index.html, with light/dark and phone/desktop switch
 | `radius`            | `22`       | Corner radius of every card.                                                                                                                                                                             |
 | `mobile.enabled`    | `true`     | Build and reference the phone-sized variant of every asset.                                                                                                                                              |
 | `mobile.breakpoint` | `600`      | Viewport width, in CSS pixels, below which those variants are used.                                                                                                                                      |
+| `mobile.hide`       | `[]`       | Section ids left off the page on a phone, e.g. `["contributions"]`. Their phone variants are never built, and below the breakpoint the block resolves to a blank image instead.                          |
 
 ## `sections`
 

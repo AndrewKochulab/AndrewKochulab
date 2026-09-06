@@ -17,6 +17,7 @@
  */
 
 import type { AssetRenderer, ThemeName, Viewport } from '../core/types.ts';
+import { BLANK_PATH } from '../pipeline/blank.ts';
 import { assetPath } from '../pipeline/build.ts';
 
 export interface PictureOptions {
@@ -28,6 +29,11 @@ export interface PictureOptions {
   readonly alt: string;
   /** Viewport width below which the phone variant is used; omit to disable it. */
   readonly mobileBreakpoint?: number | undefined;
+  /**
+   * Resolve to a blank image below the breakpoint instead of to a phone
+   * variant, which is how a section is left off the page on a phone.
+   */
+  readonly hideOnMobile?: boolean;
 }
 
 const SCHEMES: readonly ThemeName[] = ['dark', 'light'];
@@ -43,7 +49,15 @@ export function picture(
 ): string {
   const { id } = renderer;
   const sources: string[] = [];
-  const compact = options.mobileBreakpoint !== undefined && renderer.viewports.includes('compact');
+  const breakpoint = options.mobileBreakpoint;
+  if (breakpoint !== undefined && options.hideOnMobile === true) {
+    // No colour scheme on this one, so it matches whichever theme is active.
+    sources.push(`<source media="(max-width: ${String(breakpoint)}px)" srcset="${BLANK_PATH}">`);
+  }
+  const compact =
+    breakpoint !== undefined &&
+    options.hideOnMobile !== true &&
+    renderer.viewports.includes('compact');
   if (compact) {
     for (const theme of SCHEMES) {
       sources.push(
@@ -51,7 +65,7 @@ export function picture(
           id,
           theme,
           'compact',
-          `(prefers-color-scheme: ${theme}) and (max-width: ${String(options.mobileBreakpoint)}px)`,
+          `(prefers-color-scheme: ${theme}) and (max-width: ${String(breakpoint)}px)`,
         ),
       );
     }

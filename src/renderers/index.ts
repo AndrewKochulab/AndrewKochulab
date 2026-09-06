@@ -5,7 +5,7 @@
  * discover everything through this list.
  */
 
-import type { SiteConfig } from '../config/types.ts';
+import type { SectionId, SiteConfig } from '../config/types.ts';
 import type { AssetRenderer } from '../core/types.ts';
 import { createContactRenderer } from './contact.ts';
 import { contributionsRenderer } from './contributions.ts';
@@ -15,7 +15,7 @@ import { createProjectCardRenderer } from './project-card.ts';
 import { createStatsRenderer } from './stats-card.ts';
 
 /** The renderers one section contributes, in drawing order. */
-function renderersForSection(section: string, config: SiteConfig): AssetRenderer[] {
+function renderersForSection(section: SectionId, config: SiteConfig): AssetRenderer[] {
   switch (section) {
     case 'hero':
       return [createHeroRenderer(config)];
@@ -32,9 +32,22 @@ function renderersForSection(section: string, config: SiteConfig): AssetRenderer
   }
 }
 
-/** Builds the ordered list of renderers for the given configuration. */
+/** Whether a section is left off the page on a phone. */
+export function hiddenOnMobile(config: SiteConfig, section: SectionId): boolean {
+  return config.appearance.mobile.hide.includes(section);
+}
+
+/**
+ * Builds the ordered list of renderers for the given configuration. A section
+ * that phones never see has no compact layout to render, so its renderers are
+ * narrowed to the wide viewport and the build skips half their output.
+ */
 export function buildRegistry(config: SiteConfig): AssetRenderer[] {
-  return config.sections.flatMap((section) => renderersForSection(section, config));
+  return config.sections.flatMap((section) => {
+    const renderers = renderersForSection(section, config);
+    if (!hiddenOnMobile(config, section)) return renderers;
+    return renderers.map((renderer) => ({ ...renderer, viewports: ['wide' as const] }));
+  });
 }
 
 /** Looks a renderer up by id, failing loudly so a template can never point at nothing. */

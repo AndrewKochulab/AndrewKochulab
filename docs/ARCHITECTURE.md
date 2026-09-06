@@ -62,7 +62,14 @@ GitHub keeps verbatim. Two things follow.
    wins. An asset that needs only one layout (a contact button) declares
    `viewports: ['wide']` and is simply not built twice.
 
-2. **Sizing is left to the images.** Every `<svg>` carries an intrinsic
+2. **A section can be left off a phone.** `appearance.mobile.hide` lists
+   sections phones never see. Markdown cannot drop an element at a
+   breakpoint — the `<img>` is always in the page — so the narrow source
+   points at `assets/blank.svg`, a 1×1 transparent document, and the block
+   collapses to the paragraph's own margin. Such a section is also built for
+   the wide viewport only.
+
+3. **Sizing is left to the images.** Every `<svg>` carries an intrinsic
    `width`, and GitHub's stylesheet adds `img{max-width:100%}`. A card that
    asks for 430px therefore shares a row with its neighbour on a laptop and
    takes the whole column on a phone — no width attribute in the markup, which

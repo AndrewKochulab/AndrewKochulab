@@ -23,7 +23,7 @@
 </p>
 
 <p align="center">
-<picture><source media="(prefers-color-scheme: dark) and (max-width: 600px)" srcset="assets/contributions-mobile-dark.svg"><source media="(prefers-color-scheme: light) and (max-width: 600px)" srcset="assets/contributions-mobile-light.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/contributions-light.svg"><img alt="Contributions · last 12 months" src="assets/contributions-dark.svg" width="100%"></picture>
+<picture><source media="(max-width: 600px)" srcset="assets/blank.svg"><source media="(prefers-color-scheme: dark)" srcset="assets/contributions-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/contributions-light.svg"><img alt="Contributions · last 12 months" src="assets/contributions-dark.svg"></picture>
 </p>
 
 <p align="center">

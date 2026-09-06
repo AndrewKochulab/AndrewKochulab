@@ -125,6 +125,8 @@ export interface AppearanceConfig {
     readonly enabled: boolean;
     /** Viewport width, in CSS pixels, below which they are used. */
     readonly breakpoint: number;
+    /** Sections left off the page entirely on a phone. */
+    readonly hide: readonly SectionId[];
   };
 }
 

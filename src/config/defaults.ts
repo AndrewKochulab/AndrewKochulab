@@ -28,7 +28,7 @@ export const DEFAULT_SECTIONS: readonly SectionId[] = [
 export const DEFAULT_APPEARANCE: AppearanceConfig = {
   palette: 'aurora',
   radius: 22,
-  mobile: { enabled: true, breakpoint: 600 },
+  mobile: { enabled: true, breakpoint: 600, hide: [] },
 };
 
 export const DEFAULT_HERO: HeroConfig = {

@@ -17,7 +17,7 @@
   "appearance": {
     "palette": "ocean",
     "radius": 22,
-    "mobile": { "enabled": true, "breakpoint": 600 }
+    "mobile": { "enabled": true, "breakpoint": 600, "hide": ["contributions"] }
   },
 
   "sections": ["hero", "activity", "projects", "contributions", "contact"],
