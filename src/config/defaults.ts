@@ -31,7 +31,12 @@ export const DEFAULT_APPEARANCE: AppearanceConfig = {
   mobile: { enabled: true, breakpoint: 600 },
 };
 
-export const DEFAULT_HERO: HeroConfig = { stack: [], tiles: [], sparkles: 9 };
+export const DEFAULT_HERO: HeroConfig = {
+  stack: [],
+  stackOnMobile: false,
+  tiles: [],
+  sparkles: 9,
+};
 
 export const DEFAULT_STATS: StatsConfig = {
   tiles: ['stars', 'repos', 'followers', 'streak'],

@@ -51,6 +51,7 @@ build gets faster too. `activity` is the pair of stats and languages cards.
 ```json
 "hero": {
   "stack": [{ "slug": "swift", "label": "Swift", "color": "#f05138" }],
+  "stackOnMobile": false,
   "tiles": [{ "slug": "swift", "gradient": ["#ff9f43", "#f0433a"], "scale": 1 }],
   "sparkles": 9
 }
@@ -58,7 +59,10 @@ build gets faster too. `activity` is the pair of stats and languages cards.
 
 - `stack` — the chips under the tagline. `slug` is a [simple-icons] slug;
   `label` defaults to the slug and `color` to the brand colour. They wrap onto
-  more rows automatically, and the phone layout grows to fit them.
+  more rows automatically.
+- `stackOnMobile` — off by default. On a phone the chips wrap to two rows and
+  crowd a card whose tiles already name the same stack, so they are left out
+  and the card shortens to suit. Set it to `true` to keep them.
 - `tiles` — the floating app icons. Up to six; positions and sizes come from
   the layout, so adding one never means hand-placing it. `gradient` defaults
   to the flat brand colour, `scale` (0.5–1.6) nudges one tile's size.

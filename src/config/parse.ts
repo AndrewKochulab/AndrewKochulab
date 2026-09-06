@@ -207,6 +207,7 @@ function hero(raw: unknown): HeroConfig {
   const source = object(raw, 'hero');
   return {
     stack: stack(source['stack']),
+    stackOnMobile: booleanOr(source, 'stackOnMobile', 'hero', DEFAULT_HERO.stackOnMobile),
     tiles: tiles(source['tiles']),
     sparkles: numberOr(source, 'sparkles', 'hero', DEFAULT_HERO.sparkles, { min: 0, max: 40 }),
   };

@@ -47,7 +47,7 @@ interface StatsLayout extends AssetSize {
 const WIDE: StatsLayout = {
   width: 580,
   height: 260,
-  display: 430,
+  display: 405,
   headerY: 44,
   headerSize: 11,
   headerSpacing: 1.6,

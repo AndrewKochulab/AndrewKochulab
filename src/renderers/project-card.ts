@@ -66,7 +66,7 @@ const WIDE_ROW: ProjectLayout = {
 const WIDE_CARD: ProjectLayout = {
   width: 580,
   height: 150,
-  display: 430,
+  display: 405,
   left: 26,
   nameY: 42,
   nameSize: 18,

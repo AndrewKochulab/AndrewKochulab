@@ -67,20 +67,20 @@ const WIDE: CalendarLayout = {
 
 const COMPACT: CalendarLayout = {
   width: 400,
-  height: 172,
+  height: 140,
   display: 400,
-  cell: 5.2,
-  gap: 1.4,
-  gridTop: 78,
-  headerY: 30,
-  headerSize: 9,
-  headerSpacing: 1,
-  captionSize: 8.5,
-  captionOwnLine: true,
-  monthSize: 8,
+  cell: 5.6,
+  gap: 1.2,
+  gridTop: 54,
+  headerY: 26,
+  headerSize: 8.5,
+  headerSpacing: 0.8,
+  captionSize: 7,
+  captionOwnLine: false,
+  monthSize: 7.5,
   monthEvery: 2,
   weekdays: false,
-  legendSize: 8.5,
+  legendSize: 8,
 };
 
 function layoutFor(viewport: Viewport): CalendarLayout {

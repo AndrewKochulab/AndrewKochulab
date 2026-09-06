@@ -57,6 +57,11 @@ export interface HeroTile {
 
 export interface HeroConfig {
   readonly stack: readonly StackItem[];
+  /**
+   * Whether the chips also appear on a phone. Off by default: the tiles below
+   * them already name the same stack, and two rows of chips crowd the card.
+   */
+  readonly stackOnMobile: boolean;
   readonly tiles: readonly HeroTile[];
   /** Number of drifting sparkles behind the cluster; 0 disables them. */
   readonly sparkles: number;

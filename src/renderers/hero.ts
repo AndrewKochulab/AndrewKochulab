@@ -252,9 +252,15 @@ function pillPositions(
   });
 }
 
+/** Whether the stack chips are drawn at all for this viewport. */
+function showsStack(config: SiteConfig, viewport: Viewport): boolean {
+  if (config.hero.stack.length === 0) return false;
+  return viewport === 'wide' || config.hero.stackOnMobile;
+}
+
 function pillRow(ctx: RenderContext, layout: HeroLayout): Fragment {
   const { stack } = ctx.data.config.hero;
-  if (stack.length === 0) return { body: '' };
+  if (!showsStack(ctx.data.config, ctx.viewport)) return { body: '' };
   const { positions } = pillPositions(ctx.data.config, layout);
   const parts = stack.map(
     (item, index) =>
@@ -280,9 +286,9 @@ function placeTiles(
 ): readonly { readonly cx: number; readonly cy: number; readonly size: number }[] {
   if (tiles.length === 0) return [];
   if (layout.cluster.row) {
-    const gap = 16;
+    const gap = 18;
     const available = layout.width - pad('compact') * 2;
-    const size = Math.min(66, (available - gap * (tiles.length - 1)) / tiles.length);
+    const size = Math.min(72, (available - gap * (tiles.length - 1)) / tiles.length);
     const total = tiles.length * size + gap * (tiles.length - 1);
     return tiles.map((item, index) => ({
       cx: layout.cluster.x - total / 2 + size / 2 + index * (size + gap),
@@ -423,17 +429,21 @@ export function createHeroRenderer(config: SiteConfig): AssetRenderer {
   };
 }
 
-/** The compact layout with its tile row and height adjusted to the chip rows. */
+/**
+ * The compact layout, sized to what it actually draws: the text block ends at
+ * the chips when they are shown and at the tagline otherwise, and the card
+ * stops just below the tile row. Nothing is left standing in empty space.
+ */
 function compactLayout(config: SiteConfig): HeroLayout {
-  const chips = pillPositions(config, COMPACT);
-  const chipsBottom =
-    config.hero.stack.length === 0 ? COMPACT.taglineY + 8 : COMPACT.pillTop + chips.height;
-  const tileSize = config.hero.tiles.length === 0 ? 0 : 66;
-  const clusterY = chipsBottom + 26 + tileSize / 2;
+  const textBottom = showsStack(config, 'compact')
+    ? COMPACT.pillTop + pillPositions(config, COMPACT).height
+    : COMPACT.taglineY + 14;
+  const tileSize = config.hero.tiles.length === 0 ? 0 : 72;
+  const clusterY = textBottom + 26 + tileSize / 2;
   return {
     ...COMPACT,
     cluster: { ...COMPACT.cluster, y: clusterY },
-    height: tileSize === 0 ? chipsBottom + 24 : clusterY + tileSize / 2 + 24,
-    sparkleBox: { x: 24, y: clusterY - 60, w: 352, h: 120 },
+    height: tileSize === 0 ? textBottom + 24 : clusterY + tileSize / 2 + 22,
+    sparkleBox: { x: 22, y: clusterY - 62, w: 356, h: 124 },
   };
 }
