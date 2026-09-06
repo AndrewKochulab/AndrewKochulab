@@ -10,10 +10,15 @@
  *
  * Sizing is left to the images themselves wherever possible: each `<svg>`
  * carries an intrinsic width, and GitHub's `img{max-width:100%}` shrinks it on
- * anything narrower. A card that asks for less than half the column therefore
- * shares a row on a laptop and takes the full width on a phone, with no width
- * attribute in the markup — which is the only place a media query cannot
- * reach.
+ * anything narrower. A card that asks for slightly less than half the column
+ * therefore shares a row on a laptop and takes the full width on a phone, with
+ * no width attribute in the markup — which is the only place a media query
+ * cannot reach.
+ *
+ * The half-column width is 413: GitHub's profile README column measures 846
+ * CSS pixels, the `&nbsp;&nbsp;` between two cards is 16.75, and 413 + 16.75 +
+ * 413 = 842.75 leaves the pair flush with the full-width blocks above and
+ * below it, with a few pixels in hand before it would wrap.
  */
 
 import type { AssetRenderer, ThemeName, Viewport } from '../core/types.ts';
