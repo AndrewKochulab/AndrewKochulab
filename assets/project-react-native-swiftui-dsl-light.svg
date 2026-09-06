@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings."><title>react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings."><title>react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}

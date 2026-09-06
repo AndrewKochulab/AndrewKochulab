@@ -64,7 +64,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 10`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="405" height="182" role="img" aria-label="Languages"><title>Languages</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="413" height="185" role="img" aria-label="Languages"><title>Languages</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -151,7 +151,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 13`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="jarvis-dashboard: AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics."><title>jarvis-dashboard: AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="jarvis-dashboard: AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics."><title>jarvis-dashboard: AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -180,7 +180,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 14`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="jarvis-dashboard: AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics."><title>jarvis-dashboard: AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="jarvis-dashboard: AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics."><title>jarvis-dashboard: AI command center for Obsidian: live Claude Code sessions, agent fleet, voice, analytics.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -267,7 +267,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 17`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings."><title>react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings."><title>react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -296,7 +296,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 18`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings."><title>react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings."><title>react-native-swiftui-dsl: SwiftUI-style declarative DSL for React Native with chainable modifiers and bindings.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -448,7 +448,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 21`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="AnalyticsSystem: Type-safe, provider-agnostic analytics layer for Swift apps."><title>AnalyticsSystem: Type-safe, provider-agnostic analytics layer for Swift apps.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="AnalyticsSystem: Type-safe, provider-agnostic analytics layer for Swift apps."><title>AnalyticsSystem: Type-safe, provider-agnostic analytics layer for Swift apps.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -477,7 +477,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 22`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="AnalyticsSystem: Type-safe, provider-agnostic analytics layer for Swift apps."><title>AnalyticsSystem: Type-safe, provider-agnostic analytics layer for Swift apps.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="AnalyticsSystem: Type-safe, provider-agnostic analytics layer for Swift apps."><title>AnalyticsSystem: Type-safe, provider-agnostic analytics layer for Swift apps.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -564,7 +564,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 25`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="RealmStorage: Modern Realm wrapper for iOS, macOS, tvOS and watchOS."><title>RealmStorage: Modern Realm wrapper for iOS, macOS, tvOS and watchOS.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="RealmStorage: Modern Realm wrapper for iOS, macOS, tvOS and watchOS."><title>RealmStorage: Modern Realm wrapper for iOS, macOS, tvOS and watchOS.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -593,7 +593,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 26`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="405" height="105" role="img" aria-label="RealmStorage: Modern Realm wrapper for iOS, macOS, tvOS and watchOS."><title>RealmStorage: Modern Realm wrapper for iOS, macOS, tvOS and watchOS.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 150" width="413" height="107" role="img" aria-label="RealmStorage: Modern Realm wrapper for iOS, macOS, tvOS and watchOS."><title>RealmStorage: Modern Realm wrapper for iOS, macOS, tvOS and watchOS.</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -968,7 +968,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 5`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="405" height="182" role="img" aria-label="GitHub activity"><title>GitHub activity</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="413" height="185" role="img" aria-label="GitHub activity"><title>GitHub activity</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -1000,7 +1000,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 6`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="405" height="182" role="img" aria-label="GitHub activity"><title>GitHub activity</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="413" height="185" role="img" aria-label="GitHub activity"><title>GitHub activity</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -1096,7 +1096,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 9`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="405" height="182" role="img" aria-label="Languages"><title>Languages</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 580 260" width="413" height="185" role="img" aria-label="Languages"><title>Languages</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
