@@ -1,0 +1,37 @@
+{
+  "name": "andrewkochulab-profile",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Generator for the animated GitHub profile README of @AndrewKochulab: themed SVG assets, live stats, and the workflows that keep them fresh.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "fetch": "node src/cli/fetch.ts",
+    "build": "node src/cli/build.ts",
+    "readme": "node src/cli/readme.ts",
+    "preview": "node src/cli/preview.ts",
+    "palettes": "node src/cli/palettes.ts",
+    "test": "node --test \"tests/**/*.test.ts\"",
+    "test:update": "node --test --test-update-snapshots \"tests/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run typecheck && npm run lint && npm run format:check && npm test"
+  },
+  "dependencies": {
+    "opentype.js": "^2.0.0",
+    "simple-icons": "^16.29.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^26.4.1",
+    "eslint": "^10.10.0",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.9.6",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.69.0"
+  }
+}
