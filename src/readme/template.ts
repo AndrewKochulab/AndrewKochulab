@@ -1,95 +1,161 @@
 /**
  * @module readme/template
- * Produces README.md from the registry so asset references, sizes and links
- * can never drift from what the build generates.
+ * Produces README.md from the configuration and the registry, so asset
+ * references, links and section order can never drift from what the build
+ * generates.
+ *
+ * Layout rules of the page:
+ *
+ * - Every block is one centred paragraph. GitHub draws borders around table
+ *   cells (and empty boxes while images load), so no tables are used.
+ * - Full-width assets carry `width="100%"`; anything narrower carries no
+ *   width at all and relies on its intrinsic size, which is what lets a
+ *   phone stack the cards at full width. See `readme/picture.ts`.
  */
 
-import type { AssetRenderer, ProfileData } from '../core/types.ts';
+import { format } from '../config/format.ts';
+import type { SectionId, SiteConfig } from '../config/types.ts';
+import type { AssetRenderer } from '../core/types.ts';
+import { hiddenOnMobile, rendererById } from '../renderers/index.ts';
 import { picture } from './picture.ts';
 
-/** Width of a half-row image; leaves room for the inline gap between two. */
-const HALF = '48.4%';
+/** Inline gap between two images that share a row. */
+const GAP = '&nbsp;&nbsp;';
 
-function byId(renderers: readonly AssetRenderer[], id: string): AssetRenderer {
-  const renderer = renderers.find((candidate) => candidate.id === id);
-  if (!renderer) throw new Error(`No renderer registered with id "${id}"`);
-  return renderer;
+interface Context {
+  readonly config: SiteConfig;
+  readonly renderers: readonly AssetRenderer[];
+  /** Breakpoint passed to every picture, or undefined when phone assets are off. */
+  readonly breakpoint: number | undefined;
+  /** The section being emitted, so a picture knows whether phones skip it. */
+  readonly hideOnMobile: boolean;
 }
 
-function projectGrid(
-  data: Omit<ProfileData, 'stats'>,
-  renderers: readonly AssetRenderer[],
-): string {
-  return twoColumns(
-    data.projects.map((project) =>
-      picture(byId(renderers, `project-${project.repo.toLowerCase()}`), {
+function paragraph(...cells: readonly string[]): string {
+  return `<p align="center">\n${cells.join(`\n${GAP}\n`)}\n</p>`;
+}
+
+/**
+ * One full-width asset on its own line. A section phones skip cannot carry a
+ * width attribute: the blank image it resolves to would be stretched to the
+ * column and reappear as a gap the height of the column's width.
+ */
+function fullWidth(ctx: Context, id: string, alt: string, href?: string): string {
+  return paragraph(
+    picture(rendererById(ctx.renderers, id), {
+      alt,
+      ...(ctx.hideOnMobile ? {} : { width: '100%' }),
+      mobileBreakpoint: ctx.breakpoint,
+      hideOnMobile: ctx.hideOnMobile,
+      ...(href === undefined ? {} : { href }),
+    }),
+  );
+}
+
+/** Two intrinsically-sized assets per row; they stack whenever the column is narrow. */
+function pairs(cells: readonly string[]): string {
+  const rows: string[] = [];
+  for (let i = 0; i < cells.length; i += 2) {
+    const pair = [cells[i], cells[i + 1]].filter((cell): cell is string => cell !== undefined);
+    rows.push(paragraph(...pair));
+  }
+  return rows.join('\n\n');
+}
+
+function activity(ctx: Context): string {
+  return pairs([
+    picture(rendererById(ctx.renderers, 'stats'), {
+      alt: ctx.config.text.statsTitle,
+      mobileBreakpoint: ctx.breakpoint,
+      hideOnMobile: ctx.hideOnMobile,
+    }),
+    picture(rendererById(ctx.renderers, 'languages'), {
+      alt: ctx.config.text.languagesTitle,
+      mobileBreakpoint: ctx.breakpoint,
+      hideOnMobile: ctx.hideOnMobile,
+    }),
+  ]);
+}
+
+function projects(ctx: Context): string {
+  const { items, layout } = ctx.config.projects;
+  if (items.length === 0) return '';
+  if (layout === 'row') {
+    return items
+      .map((project) =>
+        fullWidth(
+          ctx,
+          `project-${project.repo.toLowerCase()}`,
+          project.repo,
+          project.url ?? undefined,
+        ),
+      )
+      .join('\n\n');
+  }
+  return pairs(
+    items.map((project) =>
+      picture(rendererById(ctx.renderers, `project-${project.repo.toLowerCase()}`), {
         alt: project.repo,
-        href: `https://github.com/${data.profile.login}/${project.repo}`,
-        width: HALF,
+        ...(project.url === undefined ? {} : { href: project.url }),
+        mobileBreakpoint: ctx.breakpoint,
+        hideOnMobile: ctx.hideOnMobile,
       }),
     ),
   );
 }
 
-function contactRow(data: Omit<ProfileData, 'stats'>, renderers: readonly AssetRenderer[]): string {
-  return data.profile.links
-    .map((link) =>
-      picture(byId(renderers, `contact-${link.id}`), {
+function contact(ctx: Context): string {
+  if (ctx.config.links.length === 0) return '';
+  return paragraph(
+    ...ctx.config.links.map((link) =>
+      picture(rendererById(ctx.renderers, `contact-${link.id}`), {
         alt: link.label,
         href: link.url,
-        height: 66,
+        ...(ctx.hideOnMobile
+          ? { mobileBreakpoint: ctx.breakpoint, hideOnMobile: true }
+          : { height: 66 }),
       }),
-    )
-    .join('\n');
+    ),
+  ).replaceAll(`\n${GAP}\n`, '\n');
 }
 
-/** Inline gap between two half-width images; with the surrounding line breaks this is about 16px, matching the row gap. */
-const GAP = '&nbsp;&nbsp;';
-
-/**
- * Two images per row without a table. GitHub draws borders around table
- * cells (and shows them as empty boxes while images load), so each row is a
- * centred paragraph of two inline images. One paragraph per row keeps every
- * vertical gap equal to the paragraph margin.
- */
-function twoColumns(cells: readonly string[]): string {
-  const rows: string[] = [];
-  for (let i = 0; i < cells.length; i += 2) {
-    const pair = [cells[i], cells[i + 1]].filter((cell): cell is string => cell !== undefined);
-    rows.push(`<p align="center">\n${pair.join(`\n${GAP}\n`)}\n</p>`);
+function section(base: Context, id: SectionId): string {
+  const ctx: Context = { ...base, hideOnMobile: hiddenOnMobile(base.config, id) };
+  const { profile, text } = ctx.config;
+  switch (id) {
+    case 'hero':
+      return fullWidth(
+        ctx,
+        'hero',
+        format(text.heroAlt, { name: profile.name, title: profile.title }),
+      );
+    case 'activity':
+      return activity(ctx);
+    case 'projects':
+      return projects(ctx);
+    case 'contributions':
+      return fullWidth(ctx, 'contributions', text.contributionsTitle);
+    case 'contact':
+      return contact(ctx);
+    default:
+      return '';
   }
-  return rows.join('\n\n');
 }
 
 /**
- * The complete README: hero, activity pair, project grid, contribution
- * calendar, contact buttons. No headings; spacing alone separates blocks and
- * the assets carry their own titles.
+ * The complete README. No headings; spacing alone separates blocks and the
+ * assets carry their own titles.
  */
-export function readmeMarkdown(
-  data: Omit<ProfileData, 'stats'>,
-  renderers: readonly AssetRenderer[],
-): string {
-  const { profile } = data;
-  return `<!-- Generated by \`npm run readme\` from src/readme/template.ts. Edit the template, not this file. -->
+export function readmeMarkdown(config: SiteConfig, renderers: readonly AssetRenderer[]): string {
+  const ctx: Context = {
+    config,
+    renderers,
+    breakpoint: config.appearance.mobile.enabled ? config.appearance.mobile.breakpoint : undefined,
+    hideOnMobile: false,
+  };
+  const blocks = config.sections.map((id) => section(ctx, id)).filter((block) => block !== '');
+  return `<!-- Generated by \`npm run readme\` from src/readme/template.ts. Edit data/config.json, not this file. -->
 
-<p align="center">
-${picture(byId(renderers, 'hero'), { alt: `${profile.name} — ${profile.title}`, width: '100%' })}
-</p>
-
-${twoColumns([
-  picture(byId(renderers, 'stats'), { alt: 'GitHub activity', width: HALF }),
-  picture(byId(renderers, 'languages'), { alt: 'Top languages', width: HALF }),
-])}
-
-${projectGrid(data, renderers)}
-
-<p align="center">
-${picture(byId(renderers, 'contributions'), { alt: 'Contribution calendar', width: '100%' })}
-</p>
-
-<p align="center">
-${contactRow(data, renderers)}
-</p>
+${blocks.join('\n\n')}
 `;
 }

@@ -1,39 +1,111 @@
 /**
  * @module renderers/languages-card
  * Language share as a self-drawing donut with a legend of animated bars.
+ * The legend sits beside the donut when there is room and beneath it on a
+ * phone, where a full-width bar is far easier to read.
  */
 
 import { ANIM } from '../core/animation.ts';
+import type { SiteConfig } from '../config/types.ts';
 import type { Fragment } from '../core/fragment.ts';
 import { el, num } from '../core/svg.ts';
 import { outlineText } from '../core/text.ts';
-import type { AssetRenderer, LanguageShare, RenderContext } from '../core/types.ts';
+import type {
+  AssetRenderer,
+  AssetSize,
+  LanguageShare,
+  RenderContext,
+  Viewport,
+} from '../core/types.ts';
 import { odometer } from '../primitives/odometer.ts';
-import { PAD, animated, assemble, eyebrow } from './shared.ts';
+import { animated, assemble, eyebrow, pad } from './shared.ts';
 
-const WIDTH = 580;
-const HEIGHT = 260;
-const DONUT = { cx: 112, cy: 152, r: 64, stroke: 18 };
-const LEGEND = { x: 232, right: WIDTH - PAD, top: 92, rowGap: 30 };
+interface LanguagesLayout extends AssetSize {
+  readonly headerY: number;
+  readonly headerSize: number;
+  readonly headerSpacing: number;
+  readonly captionSize: number;
+  readonly donut: {
+    readonly cx: number;
+    readonly cy: number;
+    readonly r: number;
+    readonly stroke: number;
+  };
+  readonly donutValueSize: number;
+  readonly legend: {
+    readonly x: number;
+    readonly right: number;
+    readonly top: number;
+    readonly rowGap: number;
+    readonly nameSize: number;
+    readonly valueSize: number;
+  };
+}
 
-function header(ctx: RenderContext): string {
+const WIDE: LanguagesLayout = {
+  width: 580,
+  height: 260,
+  display: 405,
+  headerY: 44,
+  headerSize: 11,
+  headerSpacing: 1.6,
+  captionSize: 10.5,
+  donut: { cx: 112, cy: 152, r: 64, stroke: 18 },
+  donutValueSize: 26,
+  legend: { x: 232, right: 544, top: 92, rowGap: 30, nameSize: 13, valueSize: 11.5 },
+};
+
+const COMPACT: LanguagesLayout = {
+  width: 400,
+  height: 380,
+  display: 400,
+  headerY: 34,
+  headerSize: 10,
+  headerSpacing: 1.2,
+  captionSize: 10,
+  donut: { cx: 200, cy: 130, r: 58, stroke: 17 },
+  donutValueSize: 26,
+  legend: { x: 24, right: 376, top: 236, rowGap: 32, nameSize: 14, valueSize: 12.5 },
+};
+
+/** Layouts for one configuration; both grow with the number of legend rows. */
+function layoutsFor(config: SiteConfig): Record<Viewport, LanguagesLayout> {
+  const rows = Math.max(1, config.languages.count);
+  const heightFor = (layout: LanguagesLayout): number =>
+    Math.max(layout.height, layout.legend.top + (rows - 1) * layout.legend.rowGap + 24);
+  return {
+    wide: { ...WIDE, height: heightFor(WIDE) },
+    compact: { ...COMPACT, height: heightFor(COMPACT) },
+  };
+}
+
+function header(ctx: RenderContext, layout: LanguagesLayout): string {
   const { palette } = ctx.theme;
+  const { text } = ctx.data.config;
+  const inset = pad(ctx.viewport);
   return animated(ANIM.rise, 40, [
-    eyebrow('Languages', PAD, 44, palette.text.muted),
-    outlineText('by bytes · own source repos', {
+    eyebrow(text.languagesTitle, inset, layout.headerY, palette.text.muted, {
+      size: layout.headerSize,
+      letterSpacing: layout.headerSpacing,
+    }),
+    outlineText(text.languagesCaption, {
       font: 'mono',
-      size: 10.5,
-      x: WIDTH - PAD,
-      y: 44,
+      size: layout.captionSize,
+      x: layout.width - inset,
+      y: layout.headerY,
       anchor: 'end',
       fill: palette.text.muted,
     }),
   ]);
 }
 
-function donut(ctx: RenderContext, languages: readonly LanguageShare[]): Fragment {
+function donut(
+  ctx: RenderContext,
+  layout: LanguagesLayout,
+  languages: readonly LanguageShare[],
+): Fragment {
   const { palette } = ctx.theme;
-  const { cx, cy, r, stroke } = DONUT;
+  const { cx, cy, r, stroke } = layout.donut;
   const circumference = 2 * Math.PI * r;
   const gap = 3;
   let offset = 0;
@@ -62,7 +134,7 @@ function donut(ctx: RenderContext, languages: readonly LanguageShare[]): Fragmen
         x: cx,
         y: cy + 6,
         font: 'displayBold',
-        size: 26,
+        size: layout.donutValueSize,
         fill: palette.text.primary,
         id: 'lang-top',
         anchor: 'middle',
@@ -98,43 +170,48 @@ function donut(ctx: RenderContext, languages: readonly LanguageShare[]): Fragmen
   };
 }
 
-function legend(ctx: RenderContext, languages: readonly LanguageShare[]): string {
+function legend(
+  ctx: RenderContext,
+  layout: LanguagesLayout,
+  languages: readonly LanguageShare[],
+): string {
   const { palette } = ctx.theme;
-  const barWidth = LEGEND.right - LEGEND.x;
+  const { x, right, top, rowGap, nameSize, valueSize } = layout.legend;
+  const barWidth = right - x;
   return languages
     .map((language, index) => {
-      const y = LEGEND.top + index * LEGEND.rowGap;
+      const y = top + index * rowGap;
       const filled = Math.max(2, (language.percent / 100) * barWidth);
       return animated(ANIM.rise, 240 + index * 90, [
-        el('circle', { cx: LEGEND.x + 5, cy: y - 4, r: 4.5, fill: language.color }),
+        el('circle', { cx: x + 5, cy: y - 4, r: 4.5, fill: language.color }),
         outlineText(language.name, {
           font: 'displayMedium',
-          size: 13,
-          x: LEGEND.x + 17,
+          size: nameSize,
+          x: x + 17,
           y,
           fill: palette.text.primary,
         }),
         outlineText(`${num(language.percent)}%`, {
           font: 'mono',
-          size: 11.5,
-          x: LEGEND.right,
+          size: valueSize,
+          x: right,
           y,
           anchor: 'end',
           fill: palette.text.secondary,
         }),
         el('line', {
-          x1: LEGEND.x,
+          x1: x,
           y1: y + 9,
-          x2: LEGEND.right,
+          x2: right,
           y2: y + 9,
           stroke: palette.surfaceBorder,
           'stroke-width': 3,
           'stroke-linecap': 'round',
         }),
         el('line', {
-          x1: LEGEND.x,
+          x1: x,
           y1: y + 9,
-          x2: LEGEND.x + filled,
+          x2: x + filled,
           y2: y + 9,
           stroke: language.color,
           'stroke-width': 3,
@@ -148,17 +225,21 @@ function legend(ctx: RenderContext, languages: readonly LanguageShare[]): string
     .join('');
 }
 
-/** The languages renderer. */
-export const languagesRenderer: AssetRenderer = {
-  id: 'languages',
-  width: WIDTH,
-  height: HEIGHT,
-  render(ctx) {
-    const languages = ctx.data.stats.languages.slice(0, 5);
-    return assemble(languagesRenderer, ctx, 'Top languages', [
-      { body: header(ctx) },
-      donut(ctx, languages),
-      { body: legend(ctx, languages) },
-    ]);
-  },
-};
+/** Builds the languages renderer for one configuration. */
+export function createLanguagesRenderer(config: SiteConfig): AssetRenderer {
+  const sizes = layoutsFor(config);
+  return {
+    id: 'languages',
+    viewports: ['wide', 'compact'],
+    size: (viewport) => sizes[viewport],
+    render(ctx) {
+      const layout = sizes[ctx.viewport];
+      const languages = ctx.data.stats.languages.slice(0, ctx.data.config.languages.count);
+      return assemble(layout, ctx, ctx.data.config.text.languagesTitle, [
+        { body: header(ctx, layout) },
+        donut(ctx, layout, languages),
+        { body: legend(ctx, layout, languages) },
+      ]);
+    },
+  };
+}

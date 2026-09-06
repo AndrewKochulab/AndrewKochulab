@@ -4,7 +4,7 @@
  */
 
 import type { ProfileData, StatsSnapshot } from '../src/core/types.ts';
-import { loadAuthoredData } from '../src/data/load.ts';
+import { loadConfig } from '../src/data/load.ts';
 
 export const fixtureStats: StatsSnapshot = {
   generatedAt: '2026-09-05T04:17:00.000Z',
@@ -42,7 +42,7 @@ export const fixtureStats: StatsSnapshot = {
   },
 };
 
-/** Authored data joined with the fixture snapshot. */
+/** The repository's own configuration joined with the fixture snapshot. */
 export async function fixtureData(): Promise<ProfileData> {
-  return { ...(await loadAuthoredData()), stats: fixtureStats };
+  return { config: await loadConfig(), stats: fixtureStats };
 }

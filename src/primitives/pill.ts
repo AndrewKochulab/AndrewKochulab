@@ -37,6 +37,20 @@ export interface PillResult extends Fragment {
 const PADDING_X = 14;
 const ICON_GAP = 8;
 
+/**
+ * Width of a pill without rendering it, so callers can lay a row out (and
+ * decide where it wraps) before deciding what to draw.
+ */
+export function pillWidth(
+  label: string,
+  options: { readonly fontSize?: number; readonly hasIcon?: boolean } = {},
+): number {
+  const fontSize = options.fontSize ?? 14;
+  const iconSize = Math.round(fontSize * 1.15);
+  const layout = layoutText(label, { font: 'displayMedium', size: fontSize });
+  return PADDING_X * 2 + (options.hasIcon === true ? iconSize + ICON_GAP : 0) + layout.width;
+}
+
 /** Measures and renders one pill. */
 export function pill(options: PillOptions): PillResult {
   const { theme, height = 34, fontSize = 14, variant = 'surface' } = options;

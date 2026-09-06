@@ -6,6 +6,10 @@
  * renderers, data sources and the pipeline agree on one vocabulary.
  */
 
+import type { SiteConfig, Viewport } from '../config/types.ts';
+
+export type { Viewport } from '../config/types.ts';
+
 /** The two colour schemes GitHub can render a README in. */
 export type ThemeName = 'dark' | 'light';
 
@@ -49,32 +53,6 @@ export interface Theme {
   readonly typography: Typography;
   /** Corner radius used by the outermost frame of every asset. */
   readonly radius: number;
-}
-
-/** A single outbound link on the contact strip. */
-export interface ProfileLink {
-  readonly id: string;
-  readonly label: string;
-  readonly url: string;
-}
-
-/** Static facts about the person, authored in `data/profile.json`. */
-export interface Profile {
-  readonly login: string;
-  readonly name: string;
-  readonly title: string;
-  readonly location: string;
-  /** Lines the hero types out one after another. */
-  readonly taglines: readonly string[];
-  readonly links: readonly ProfileLink[];
-  /** Palette variant id from `src/theme/tokens.ts`; defaults to `aurora`. */
-  readonly palette?: string;
-}
-
-/** A repository featured on the profile. Live numbers are joined in from {@link StatsSnapshot}. */
-export interface FeaturedProject {
-  readonly repo: string;
-  readonly blurb: string;
 }
 
 /** Live numbers for one repository. */
@@ -131,26 +109,43 @@ export interface StatsSnapshot {
 
 /** All data a renderer may read. Assembled once per build. */
 export interface ProfileData {
-  readonly profile: Profile;
-  readonly projects: readonly FeaturedProject[];
+  /** The resolved contents of `data/config.json`. */
+  readonly config: SiteConfig;
   readonly stats: StatsSnapshot;
 }
 
-/** What a renderer receives: the theme to paint with and the data to paint. */
+/** What a renderer receives: the theme, the data, and the width it is drawn for. */
 export interface RenderContext {
   readonly theme: Theme;
   readonly data: ProfileData;
+  /** `wide` for the README column, `compact` for phones. */
+  readonly viewport: Viewport;
+}
+
+/** The viewBox of one asset variant, plus the CSS size it is served at. */
+export interface AssetSize {
+  /** User units of the viewBox. */
+  readonly width: number;
+  readonly height: number;
+  /**
+   * Intrinsic width in CSS pixels, written into the `width` attribute of the
+   * `<svg>` root. It decides how much room the image asks for in the README,
+   * and therefore whether two cards share a row; `max-width:100%` in GitHub's
+   * stylesheet shrinks it on anything narrower.
+   */
+  readonly display: number;
 }
 
 /**
- * A pure producer of one SVG asset. The pipeline calls `render` once per theme
- * and writes the result to `assets/<id>-<theme>.svg`.
+ * A pure producer of one SVG asset. The pipeline calls `render` once per
+ * viewport and theme, writing to `assets/<id>[-mobile]-<theme>.svg`.
  */
 export interface AssetRenderer {
   /** Stable identifier; becomes part of the output file name. */
   readonly id: string;
-  /** Intrinsic size, also used by the README to reserve space. */
-  readonly width: number;
-  readonly height: number;
+  /** Viewports this asset has a layout for. A missing `compact` reuses `wide`. */
+  readonly viewports: readonly Viewport[];
+  /** Geometry for one viewport. */
+  size(viewport: Viewport): AssetSize;
   render(ctx: RenderContext): string;
 }

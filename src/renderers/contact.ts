@@ -8,7 +8,9 @@
 import { ANIM, animationCss } from '../core/animation.ts';
 import { el, num, svgDocument } from '../core/svg.ts';
 import { layoutText, outlineText } from '../core/text.ts';
-import type { AssetRenderer, ProfileLink } from '../core/types.ts';
+import type { LinkItem } from '../config/types.ts';
+import type { AssetRenderer } from '../core/types.ts';
+import { FALLBACK_BRAND } from '../config/defaults.ts';
 import { icon } from '../primitives/icon.ts';
 
 const HEIGHT = 46;
@@ -18,27 +20,23 @@ const ICON = 20;
 const GAP = 10;
 const SHADOW = 10;
 
-/** Brand looks. `stops` is the fill gradient (single colour allowed). */
-const BRANDS: Readonly<
-  Record<string, { readonly stops: readonly string[]; readonly angle: number }>
-> = {
-  instagram: { stops: ['#f9ce34', '#ee2a7b', '#6228d7'], angle: 45 },
-  linkedin: { stops: ['#0a66c2', '#0a66c2'], angle: 0 },
-};
-
-const FALLBACK = { stops: ['#5ac8fa', '#bf5af2'], angle: 45 } as const;
-
-/** Creates the renderer for one contact button. */
-export function createContactRenderer(link: ProfileLink): AssetRenderer {
+/**
+ * Creates the renderer for one contact button. Colours come from the link's
+ * own `gradient`/`angle`, which `config/parse` has already filled in from the
+ * known brands where the config stayed silent.
+ */
+export function createContactRenderer(link: LinkItem): AssetRenderer {
   const label = layoutText(link.label, { font: 'displaySemiBold', size: FONT_SIZE });
   const buttonWidth = Math.ceil(PAD_X + ICON + GAP + label.width + PAD_X);
   const width = buttonWidth + SHADOW * 2;
   const height = HEIGHT + SHADOW * 2;
-  const brand = BRANDS[link.id] ?? FALLBACK;
+  const stops = link.gradient ?? FALLBACK_BRAND.gradient;
+  const brand = { stops, angle: link.angle ?? FALLBACK_BRAND.angle };
   const renderer: AssetRenderer = {
     id: `contact-${link.id}`,
-    width,
-    height,
+    // A button is already phone-sized; one variant serves both viewports.
+    viewports: ['wide'],
+    size: () => ({ width, height, display: width }),
     render(ctx) {
       const gradientId = `brand-${link.id}`;
       const rad = (brand.angle * Math.PI) / 180;
@@ -97,7 +95,12 @@ export function createContactRenderer(link: ProfileLink): AssetRenderer {
             stroke: '#ffffff',
             'stroke-opacity': 0.25,
           }),
-          icon(link.id, { x: PAD_X, y: (HEIGHT - ICON) / 2, size: ICON, fill: '#ffffff' }),
+          icon(link.icon ?? link.id, {
+            x: PAD_X,
+            y: (HEIGHT - ICON) / 2,
+            size: ICON,
+            fill: '#ffffff',
+          }),
           outlineText(link.label, {
             font: 'displaySemiBold',
             size: FONT_SIZE,

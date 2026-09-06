@@ -7,16 +7,20 @@ import { picture } from '../src/readme/picture.ts';
 import { readmeMarkdown } from '../src/readme/template.ts';
 import { buildRegistry } from '../src/renderers/index.ts';
 import { THEMES } from '../src/theme/index.ts';
+import type { Viewport } from '../src/core/types.ts';
 import { huntPath, placeCells } from '../src/renderers/contributions.ts';
 import { fixtureData } from './helpers.ts';
 
+const VIEWPORTS: readonly Viewport[] = ['wide', 'compact'];
+
 describe('registry and pipeline', () => {
-  it('renders every asset in every theme through the sink', async () => {
+  it('renders every asset in every theme and viewport through the sink', async () => {
     const data = await fixtureData();
-    const renderers = buildRegistry(data);
+    const renderers = buildRegistry(data.config);
     const sink = new MemorySink();
     const manifest = await buildAssets({ renderers, themes: THEMES, data, sink });
-    assert.equal(manifest.length, renderers.length * THEMES.length);
+    const expected = renderers.reduce((sum, r) => sum + r.viewports.length, 0) * THEMES.length;
+    assert.equal(manifest.length, expected);
     for (const asset of manifest) {
       const svg = sink.files.get(asset.path);
       assert.ok(svg, asset.path);
@@ -25,26 +29,54 @@ describe('registry and pipeline', () => {
     }
   });
 
+  it('writes the phone variants under a -mobile name', async () => {
+    const data = await fixtureData();
+    const sink = new MemorySink();
+    await buildAssets({ renderers: buildRegistry(data.config), themes: THEMES, data, sink });
+    assert.ok(sink.files.has('assets/stats-mobile-dark.svg'));
+    assert.ok(sink.files.has('assets/stats-dark.svg'));
+    // A contact button is already phone-sized and has no second variant.
+    assert.ok(!sink.files.has('assets/contact-linkedin-mobile-dark.svg'));
+  });
+
+  it('serves a narrower intrinsic width for the cards that pair up', async () => {
+    const data = await fixtureData();
+    const stats = buildRegistry(data.config).find((r) => r.id === 'stats');
+    const theme = THEMES[0];
+    assert.ok(stats);
+    assert.ok(theme);
+    // Two of these plus the inline gap must fit GitHub's README column, which
+    // is what makes them share a row on a laptop and stack on a phone.
+    assert.ok(stats.size('wide').display * 2 < 880);
+    const svg = stats.render({ theme, data, viewport: 'wide' });
+    assert.ok(svg.includes(`width="${String(stats.size('wide').display)}"`));
+  });
+
   it('keeps renderer ids unique', async () => {
-    const ids = buildRegistry(await fixtureData()).map((r) => r.id);
+    const ids = buildRegistry((await fixtureData()).config).map((r) => r.id);
     assert.equal(new Set(ids).size, ids.length);
   });
 
-  it('matches snapshots for both themes', async (t) => {
+  it('matches snapshots for both themes and viewports', async (t) => {
     const data = await fixtureData();
-    for (const renderer of buildRegistry(data)) {
-      for (const theme of THEMES) {
-        t.assert.snapshot(renderer.render({ theme, data }), {
-          serializers: [(value) => String(value)],
-        });
+    for (const renderer of buildRegistry(data.config)) {
+      for (const viewport of VIEWPORTS) {
+        if (!renderer.viewports.includes(viewport)) continue;
+        for (const theme of THEMES) {
+          t.assert.snapshot(renderer.render({ theme, data, viewport }), {
+            serializers: [(value) => String(value)],
+          });
+        }
       }
     }
   });
 });
 
 describe('readme', () => {
+  const hero = { id: 'hero', viewports: ['wide', 'compact'] } as const;
+
   it('emits picture blocks that reference built asset paths', () => {
-    const markup = picture({ id: 'hero' }, { alt: 'Hero', width: '100%', href: 'https://x' });
+    const markup = picture(hero, { alt: 'Hero', width: '100%', href: 'https://x' });
     assert.ok(markup.startsWith('<a href="https://x"><picture><source'));
     assert.ok(!markup.includes('\n'), 'single line');
     assert.ok(markup.endsWith('</picture></a>'));
@@ -53,12 +85,38 @@ describe('readme', () => {
     assert.ok(markup.includes('width="100%"'));
   });
 
+  it('puts the narrow sources first, so a phone matches them before the wide ones', () => {
+    const markup = picture(hero, { alt: 'Hero', mobileBreakpoint: 600 });
+    const order = [
+      'assets/hero-mobile-dark.svg',
+      'assets/hero-mobile-light.svg',
+      'assets/hero-dark.svg',
+    ].map((path) => markup.indexOf(path));
+    assert.deepEqual(
+      order,
+      [...order].sort((a, b) => a - b),
+    );
+    assert.ok(markup.includes('(prefers-color-scheme: dark) and (max-width: 600px)'));
+    assert.ok(!markup.includes('width='), 'intrinsic sizing when no width is asked for');
+  });
+
+  it('omits the narrow sources for assets that have only one layout', () => {
+    const markup = picture(
+      { id: 'contact-x', viewports: ['wide'] },
+      {
+        alt: 'X',
+        mobileBreakpoint: 600,
+      },
+    );
+    assert.ok(!markup.includes('max-width'));
+  });
+
   it('references every project, stat card and contact link', async () => {
-    const data = await fixtureData();
-    const markdown = readmeMarkdown(data, buildRegistry(data));
-    for (const project of data.projects)
+    const { config } = await fixtureData();
+    const markdown = readmeMarkdown(config, buildRegistry(config));
+    for (const project of config.projects.items)
       assert.ok(markdown.includes(`assets/project-${project.repo.toLowerCase()}-dark.svg`));
-    for (const link of data.profile.links) assert.ok(markdown.includes(link.url));
+    for (const link of config.links) assert.ok(markdown.includes(link.url));
     assert.ok(markdown.includes('assets/stats-dark.svg'));
     assert.ok(markdown.includes('assets/languages-light.svg'));
     assert.ok(markdown.includes('assets/contributions-dark.svg'));
@@ -67,6 +125,36 @@ describe('readme', () => {
       'activity precedes projects',
     );
     assert.ok(!markdown.includes('refreshed daily'), 'no footer');
+  });
+
+  it('resolves a section hidden on phones to a blank image below the breakpoint', async () => {
+    const { config } = await fixtureData();
+    const hidden = {
+      ...config,
+      appearance: {
+        ...config.appearance,
+        mobile: { ...config.appearance.mobile, hide: ['contributions' as const] },
+      },
+    };
+    const renderers = buildRegistry(hidden);
+    const calendar = renderers.find((r) => r.id === 'contributions');
+    assert.deepEqual(calendar?.viewports, ['wide'], 'no phone variant is built');
+    const markdown = readmeMarkdown(hidden, renderers);
+    assert.ok(markdown.includes('<source media="(max-width: 600px)" srcset="assets/blank.svg">'));
+    assert.ok(!markdown.includes('contributions-mobile'));
+    // A width attribute would stretch the blank image back into a gap.
+    const block = markdown.split('\n').find((line) => line.includes('assets/blank.svg')) ?? '';
+    assert.ok(!block.includes('width='), block);
+    // Sections that are not hidden keep their phone variant.
+    assert.ok(markdown.includes('stats-mobile-dark.svg'));
+  });
+
+  it('follows the configured section order and drops what is not listed', async () => {
+    const { config } = await fixtureData();
+    const reordered = { ...config, sections: ['contributions', 'hero'] as const };
+    const markdown = readmeMarkdown(reordered, buildRegistry(reordered));
+    assert.ok(markdown.indexOf('contributions-dark') < markdown.indexOf('hero-dark'));
+    assert.ok(!markdown.includes('assets/stats-dark.svg'));
   });
 });
 
