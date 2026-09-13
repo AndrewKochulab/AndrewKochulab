@@ -76,6 +76,7 @@ describe('snapshot assembly', () => {
     commits: 10,
     pullRequests: 1,
     totalContributions: 12,
+    restrictedContributions: 0,
     calendarDays: [day('2026-01-01', 1), day('2026-01-02', 0), day('2026-01-03', 1)],
     repositories: [
       {
@@ -112,7 +113,16 @@ describe('snapshot assembly', () => {
   });
 
   it('marks public scope when another account fetched', () => {
-    assert.equal(assembleSnapshot(raw, 'other', new Date()).scope, 'public');
+    const snapshot = assembleSnapshot(raw, 'other', new Date());
+    assert.equal(snapshot.scope, 'public');
+    assert.equal(snapshot.ownerView, false);
+  });
+
+  it('counts the calendar as complete when the user shares private counts', () => {
+    const shared = { ...raw, restrictedContributions: 40 };
+    const snapshot = assembleSnapshot(shared, 'other', new Date());
+    assert.equal(snapshot.scope, 'private-included');
+    assert.equal(snapshot.ownerView, false);
   });
 
   it('round-trips through JSON and rejects incomplete documents', () => {
@@ -159,6 +169,7 @@ describe('GitHub client', () => {
             contributionsCollection: {
               totalCommitContributions: 3,
               totalPullRequestContributions: 4,
+              restrictedContributionsCount: 6,
               contributionCalendar: {
                 totalContributions: 5,
                 weeks: [{ contributionDays: [day('d1', 1)] }, { contributionDays: [day('d2', 0)] }],
@@ -191,24 +202,44 @@ describe('snapshot merge', () => {
       calendar: [],
     };
     const { snapshot, preserved } = preserveRicherSnapshot(fixtureStats, next);
-    assert.equal(preserved, true);
+    assert.deepEqual(preserved, { calendar: true, owner: false });
     assert.equal(snapshot.scope, 'private-included');
     assert.equal(snapshot.contributionsLastYear, fixtureStats.contributionsLastYear);
     assert.equal(snapshot.calendar.length, fixtureStats.calendar.length);
     assert.equal(snapshot.followers, 31);
   });
 
+  it('refreshes a complete calendar but keeps owner-only figures from another token', () => {
+    const previous = { ...fixtureStats, ownerView: true };
+    const next = {
+      ...fixtureStats,
+      ownerView: false,
+      contributionsLastYear: 1500,
+      calendar: [{ date: '2026-09-13', count: 148, level: 4 as const }],
+      commitsLastYear: 2,
+      languages: [],
+    };
+    const { snapshot, preserved } = preserveRicherSnapshot(previous, next);
+    assert.deepEqual(preserved, { calendar: false, owner: true });
+    assert.equal(snapshot.contributionsLastYear, 1500);
+    assert.deepEqual(snapshot.calendar, next.calendar);
+    assert.equal(snapshot.commitsLastYear, fixtureStats.commitsLastYear);
+    assert.deepEqual(snapshot.languages, fixtureStats.languages);
+    assert.equal(snapshot.ownerView, true);
+  });
+
   it('takes the new snapshot whenever it is at least as rich', () => {
+    const none = { calendar: false, owner: false };
     const richer = { ...fixtureStats, followers: 40 };
     assert.deepEqual(preserveRicherSnapshot(fixtureStats, richer), {
       snapshot: richer,
-      preserved: false,
+      preserved: none,
     });
     assert.deepEqual(preserveRicherSnapshot(undefined, richer), {
       snapshot: richer,
-      preserved: false,
+      preserved: none,
     });
-    const publicOnly = { ...fixtureStats, scope: 'public' as const };
-    assert.equal(preserveRicherSnapshot(publicOnly, publicOnly).preserved, false);
+    const publicOnly = { ...fixtureStats, scope: 'public' as const, ownerView: false };
+    assert.deepEqual(preserveRicherSnapshot(publicOnly, publicOnly).preserved, none);
   });
 });

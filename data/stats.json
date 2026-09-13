@@ -1,53 +1,19 @@
 {
-  "generatedAt": "2026-09-13T09:35:49.888Z",
+  "generatedAt": "2026-09-13T19:16:26.282Z",
   "scope": "private-included",
+  "ownerView": true,
   "followers": 29,
   "publicRepos": 8,
-  "starsEarned": 148,
-  "contributionsLastYear": 920,
-  "activeDaysLastYear": 78,
-  "commitsLastYear": 52,
-  "pullRequestsLastYear": 8,
+  "starsEarned": 149,
+  "contributionsLastYear": 1496,
+  "activeDaysLastYear": 88,
+  "commitsLastYear": 61,
+  "pullRequestsLastYear": 10,
   "streaks": {
-    "current": 1,
+    "current": 10,
     "longest": 19
   },
   "calendar": [
-    {
-      "date": "2025-09-07",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-09-08",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-09-09",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-09-10",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-09-11",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-09-12",
-      "count": 0,
-      "level": 0
-    },
-    {
-      "date": "2025-09-13",
-      "count": 0,
-      "level": 0
-    },
     {
       "date": "2025-09-14",
       "count": 0,
@@ -291,7 +257,7 @@
     {
       "date": "2025-11-01",
       "count": 23,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2025-11-02",
@@ -786,12 +752,12 @@
     {
       "date": "2026-02-08",
       "count": 21,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-02-09",
       "count": 22,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-02-10",
@@ -811,7 +777,7 @@
     {
       "date": "2026-02-13",
       "count": 24,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-02-14",
@@ -821,7 +787,7 @@
     {
       "date": "2026-02-15",
       "count": 18,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-02-16",
@@ -1106,17 +1072,17 @@
     {
       "date": "2026-04-13",
       "count": 16,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-04-14",
       "count": 17,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-04-15",
       "count": 19,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-04-16",
@@ -1126,7 +1092,7 @@
     {
       "date": "2026-04-17",
       "count": 31,
-      "level": 3
+      "level": 1
     },
     {
       "date": "2026-04-18",
@@ -1136,32 +1102,32 @@
     {
       "date": "2026-04-19",
       "count": 52,
-      "level": 4
+      "level": 2
     },
     {
       "date": "2026-04-20",
       "count": 33,
-      "level": 3
+      "level": 1
     },
     {
       "date": "2026-04-21",
       "count": 31,
-      "level": 3
+      "level": 1
     },
     {
       "date": "2026-04-22",
       "count": 25,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-04-23",
       "count": 60,
-      "level": 4
+      "level": 2
     },
     {
       "date": "2026-04-24",
       "count": 61,
-      "level": 4
+      "level": 2
     },
     {
       "date": "2026-04-25",
@@ -1176,7 +1142,7 @@
     {
       "date": "2026-04-27",
       "count": 17,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-04-28",
@@ -1241,12 +1207,12 @@
     {
       "date": "2026-05-10",
       "count": 20,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-05-11",
       "count": 23,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-05-12",
@@ -1271,12 +1237,12 @@
     {
       "date": "2026-05-16",
       "count": 29,
-      "level": 2
+      "level": 1
     },
     {
       "date": "2026-05-17",
-      "count": 21,
-      "level": 2
+      "count": 23,
+      "level": 1
     },
     {
       "date": "2026-05-18",
@@ -1760,18 +1726,18 @@
     },
     {
       "date": "2026-08-22",
-      "count": 7,
+      "count": 8,
       "level": 1
     },
     {
       "date": "2026-08-23",
-      "count": 21,
+      "count": 39,
       "level": 2
     },
     {
       "date": "2026-08-24",
-      "count": 0,
-      "level": 0
+      "count": 2,
+      "level": 1
     },
     {
       "date": "2026-08-25",
@@ -1825,56 +1791,91 @@
     },
     {
       "date": "2026-09-04",
-      "count": 0,
-      "level": 0
+      "count": 7,
+      "level": 1
     },
     {
       "date": "2026-09-05",
-      "count": 1,
+      "count": 18,
       "level": 1
     },
     {
       "date": "2026-09-06",
-      "count": 0,
-      "level": 0
+      "count": 119,
+      "level": 4
+    },
+    {
+      "date": "2026-09-07",
+      "count": 57,
+      "level": 2
+    },
+    {
+      "date": "2026-09-08",
+      "count": 59,
+      "level": 2
+    },
+    {
+      "date": "2026-09-09",
+      "count": 8,
+      "level": 1
+    },
+    {
+      "date": "2026-09-10",
+      "count": 17,
+      "level": 1
+    },
+    {
+      "date": "2026-09-11",
+      "count": 23,
+      "level": 1
+    },
+    {
+      "date": "2026-09-12",
+      "count": 98,
+      "level": 3
+    },
+    {
+      "date": "2026-09-13",
+      "count": 148,
+      "level": 4
     }
   ],
   "languages": [
     {
-      "name": "Python",
-      "color": "#3572A5",
-      "bytes": 3003684,
-      "percent": 41.5
-    },
-    {
       "name": "TypeScript",
       "color": "#3178c6",
-      "bytes": 2301819,
-      "percent": 31.8
+      "bytes": 8046362,
+      "percent": 47.1
+    },
+    {
+      "name": "Python",
+      "color": "#3572A5",
+      "bytes": 7090083,
+      "percent": 41.5
     },
     {
       "name": "Swift",
       "color": "#F05138",
-      "bytes": 1180277,
-      "percent": 16.3
+      "bytes": 1181950,
+      "percent": 6.9
     },
     {
       "name": "JavaScript",
       "color": "#f1e05a",
-      "bytes": 551601,
-      "percent": 7.6
+      "bytes": 552647,
+      "percent": 3.2
     },
     {
       "name": "Shell",
       "color": "#89e051",
-      "bytes": 167787,
-      "percent": 2.3
+      "bytes": 195812,
+      "percent": 1.1
     },
     {
       "name": "Rust",
       "color": "#dea584",
       "bytes": 26566,
-      "percent": 0.4
+      "percent": 0.2
     }
   ],
   "repos": {

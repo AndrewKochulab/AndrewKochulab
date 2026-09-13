@@ -851,7 +851,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 33`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152 66" width="152" height="66" role="img" aria-label="LinkedIn: https://www.linkedin.com/in/andrewkochulab"><title>LinkedIn: https://www.linkedin.com/in/andrewkochulab</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152 66" width="152" height="66" role="img" aria-label="LinkedIn: https://www.linkedin.com/in/andrew_kochulab"><title>LinkedIn: https://www.linkedin.com/in/andrew_kochulab</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -877,7 +877,7 @@ exports[`registry and pipeline > matches snapshots for both themes and viewports
 `;
 
 exports[`registry and pipeline > matches snapshots for both themes and viewports 34`] = `
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152 66" width="152" height="66" role="img" aria-label="LinkedIn: https://www.linkedin.com/in/andrewkochulab"><title>LinkedIn: https://www.linkedin.com/in/andrewkochulab</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 152 66" width="152" height="66" role="img" aria-label="LinkedIn: https://www.linkedin.com/in/andrew_kochulab"><title>LinkedIn: https://www.linkedin.com/in/andrew_kochulab</title><style>@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:scale(1)}}
 @keyframes spin{to{transform:rotate(360deg)}}

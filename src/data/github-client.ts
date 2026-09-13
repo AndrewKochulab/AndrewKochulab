@@ -72,6 +72,12 @@ export interface RawProfile {
   readonly commits: number;
   readonly pullRequests: number;
   readonly totalContributions: number;
+  /**
+   * Private contributions the token cannot open but that the calendar still
+   * counts. Non-zero only when the user shares private contribution counts
+   * on their profile, which makes the calendar complete for any token.
+   */
+  readonly restrictedContributions: number;
   readonly calendarDays: readonly ContributionDayNode[];
   readonly repositories: readonly RepositoryNode[];
 }
@@ -85,6 +91,7 @@ query Profile($login: String!) {
     contributionsCollection {
       totalCommitContributions
       totalPullRequestContributions
+      restrictedContributionsCount
       contributionCalendar {
         totalContributions
         weeks { contributionDays { date contributionCount contributionLevel } }
@@ -120,6 +127,7 @@ interface ProfileResponse {
     readonly contributionsCollection: {
       readonly totalCommitContributions: number;
       readonly totalPullRequestContributions: number;
+      readonly restrictedContributionsCount: number;
       readonly contributionCalendar: {
         readonly totalContributions: number;
         readonly weeks: readonly { readonly contributionDays: readonly ContributionDayNode[] }[];
@@ -159,6 +167,7 @@ export class GitHubClient {
       commits: contributions.totalCommitContributions,
       pullRequests: contributions.totalPullRequestContributions,
       totalContributions: contributions.contributionCalendar.totalContributions,
+      restrictedContributions: contributions.restrictedContributionsCount,
       calendarDays: contributions.contributionCalendar.weeks.flatMap(
         (week) => week.contributionDays,
       ),

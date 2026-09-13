@@ -29,9 +29,14 @@ async function main(): Promise<void> {
   const target = dataPath('stats.json');
   const previous = await readPrevious(target);
   const { snapshot, preserved } = preserveRicherSnapshot(previous, fresh);
-  if (preserved) {
+  if (preserved.calendar) {
     console.warn(
-      'Token sees public data only; kept the private contribution figures from the previous snapshot.',
+      'Token cannot see private contributions; kept the calendar from the previous snapshot.',
+    );
+  }
+  if (preserved.owner) {
+    console.warn(
+      'Token is not the profile owner; kept commits, pull requests and languages from the previous snapshot. Add a PROFILE_TOKEN secret to refresh them.',
     );
   }
   await writeFile(target, `${JSON.stringify(snapshot, null, 2)}\n`, 'utf8');

@@ -104,8 +104,12 @@ data/config.json + data/stats.json
   and pull request.
 - `refresh.yml` runs daily (04:17 UTC) and on demand: fetch → build → readme →
   amend the single commit and force-push, only when something changed. The
-  repository deliberately has one commit; treat `main` as generated. Set the optional `PROFILE_TOKEN` secret
-  (classic PAT with `read:user` and `repo`) so private contributions count.
+  repository deliberately has one commit; treat `main` as generated. The
+  calendar refreshes with the default `GITHUB_TOKEN` as long as the profile
+  shares private contribution counts. Set the optional `PROFILE_TOKEN` secret
+  (classic PAT with `read:user` and `repo`) so commits, pull requests and
+  languages from private repositories refresh too; without it they are kept
+  from the last snapshot the owner's token fetched (`src/data/merge.ts`).
 
 ## Palette
 
@@ -121,7 +125,8 @@ commit. `npm run palettes` renders a side-by-side comparison page, and
 columns and moves a snake along a serpentine path with SMIL `animateMotion`
 (supported in every browser for SVGs inside `<img>`). Contribution cells use
 CSS keyframes timed to the same cycle so they pop and dim as the head passes.
-Private contributions are included whenever the fetch ran with `PROFILE_TOKEN`.
+Private contributions are included whenever the fetch ran with `PROFILE_TOKEN`
+or the profile shares private contribution counts.
 On a phone the same calendar is drawn on a smaller pitch, without the weekday
 labels and with every other month named. `contributions.snake: false` in the
 config keeps the calendar and drops the snake.

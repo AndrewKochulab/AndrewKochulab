@@ -49,9 +49,13 @@ export function assembleSnapshot(raw: RawProfile, login: string, now: Date): Sta
       bytes: edge.size,
     })),
   );
+  const ownerView = raw.viewerLogin.toLowerCase() === login.toLowerCase();
   return {
     generatedAt: now.toISOString(),
-    scope: raw.viewerLogin.toLowerCase() === login.toLowerCase() ? 'private-included' : 'public',
+    // Shared private counts reach every token, so the calendar is complete even
+    // when the Actions token fetched it.
+    scope: ownerView || raw.restrictedContributions > 0 ? 'private-included' : 'public',
+    ownerView,
     followers: raw.followers,
     publicRepos: raw.publicSourceRepos,
     starsEarned: raw.repositories.reduce((sum, repo) => sum + repo.stargazerCount, 0),

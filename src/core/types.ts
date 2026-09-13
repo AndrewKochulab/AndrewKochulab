@@ -89,8 +89,14 @@ export interface Streaks {
 export interface StatsSnapshot {
   /** ISO-8601 timestamp of the fetch. */
   readonly generatedAt: string;
-  /** Whether private contributions were visible to the token that fetched. */
+  /** Whether the contribution calendar and its totals count private contributions. */
   readonly scope: 'public' | 'private-included';
+  /**
+   * Whether the profile owner's own token fetched, so private repositories
+   * (languages, stars) and private commit and pull request totals were visible.
+   * Absent in snapshots written before this field existed.
+   */
+  readonly ownerView?: boolean;
   readonly followers: number;
   readonly publicRepos: number;
   readonly starsEarned: number;
