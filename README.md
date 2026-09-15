@@ -28,5 +28,5 @@
 
 <p align="center">
 <a href="https://www.instagram.com/andrewkochulab"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/contact-instagram-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/contact-instagram-light.svg"><img alt="Instagram" src="assets/contact-instagram-dark.svg" height="66"></picture></a>
-<a href="https://www.linkedin.com/in/andrew_kochulab"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/contact-linkedin-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/contact-linkedin-light.svg"><img alt="LinkedIn" src="assets/contact-linkedin-dark.svg" height="66"></picture></a>
+<a href="https://www.linkedin.com/in/andrew-kochulab"><picture><source media="(prefers-color-scheme: dark)" srcset="assets/contact-linkedin-dark.svg"><source media="(prefers-color-scheme: light)" srcset="assets/contact-linkedin-light.svg"><img alt="LinkedIn" src="assets/contact-linkedin-dark.svg" height="66"></picture></a>
 </p>
