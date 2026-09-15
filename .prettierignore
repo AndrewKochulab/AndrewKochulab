@@ -1,0 +1,7 @@
+assets/
+preview/
+node_modules/
+fonts/
+tests/**/*.snapshot
+package-lock.json
+README.md
